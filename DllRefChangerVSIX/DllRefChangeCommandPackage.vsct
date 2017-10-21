@@ -56,7 +56,7 @@
         <Parent guid="guidDllRefChangeCommandPackageCmdSet" id="MyMenuGroup" />
         <Icon guid="guidImages" id="bmpPic1" />
         <Strings>
-          <ButtonText>Invoke DllRefChangeCommand</ButtonText>
+          <ButtonText>修改解决方案DLL引用</ButtonText>
         </Strings>
       </Button>
     </Buttons>
