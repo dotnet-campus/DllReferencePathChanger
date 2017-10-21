@@ -70,6 +70,10 @@
     <VSCTCompile Include="DllRefChangeCommandPackage.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
     </VSCTCompile>
+    <Content Include="dll_128px_1071188_easyicon.net.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="index.html" />
     <Content Include="Resources\DllRefChangeCommand.png" />
     <Content Include="Resources\DllRefChangeCommandPackage.ico" />
