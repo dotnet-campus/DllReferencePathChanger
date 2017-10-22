@@ -13,29 +13,19 @@ namespace DllRefChanger
     /// </summary>
     public class FileReferenceChanger : IReferenceChanger
     {
-        public FileReferenceChanger(string solutionPath, string sourceDllPath, string targetDllPath)
+
+        public FileReferenceChanger(string solutionPath, string targetDllPath)
         {
             SolutionPath = solutionPath;
-            SourceDllPath = sourceDllPath;
             TargetDllPath = targetDllPath;
 
-            if (!File.Exists(solutionPath) || !File.Exists(sourceDllPath) || !File.Exists(targetDllPath))
+            if (!File.Exists(solutionPath) || !File.Exists(targetDllPath))
             {
                 throw new FileNotFoundException();
             }
-            if (Path.GetFileName(sourceDllPath) != Path.GetFileName(targetDllPath))
-            {
-                throw new ArgumentException("源于目标的文件名不一致");
-            }
-
         }
 
         public string SolutionPath { get; set; }
-
-        /// <summary>
-        /// 原来的DLL文件引用
-        /// </summary>
-        public string SourceDllPath { get; }
 
         /// <summary>
         /// 新的DLL文件引用
@@ -43,22 +33,34 @@ namespace DllRefChanger
         public string TargetDllPath { get; }
 
         private string _tempFilePath;
+        private bool _hasBackuped = false;
 
         public void Change()
-        {
-            // 先讲将要被替换的文件保存到临时目录
-            string tempPath = Path.Combine(System.IO.Path.GetTempPath(), System.Guid.NewGuid().ToString());
-            Directory.CreateDirectory(tempPath);
-            _tempFilePath = Path.Combine(tempPath, Path.GetFileName(SourceDllPath));
-            File.Copy(SourceDllPath, _tempFilePath, true);
-
-            Replace(Path.GetFileName(SourceDllPath),TargetDllPath);
-
+        {    
+            Replace(Path.GetFileName(TargetDllPath),TargetDllPath);
         }
 
         public void UndoChange()
         {
+            if (!CanUndoChange())
+            {
+                return;
+            }
             Replace(Path.GetFileName(TargetDllPath), _tempFilePath);
+        }
+
+        public bool CanUndoChange()
+        {
+            return !string.IsNullOrEmpty(_tempFilePath) && File.Exists(_tempFilePath);
+        }
+
+        private void BackupSourceDll(string sourceDllFullName)
+        {
+            // 先讲将要被替换的文件保存到临时目录
+            string tempPath = Path.Combine(System.IO.Path.GetTempPath(), System.Guid.NewGuid().ToString());
+            Directory.CreateDirectory(tempPath);
+            _tempFilePath = Path.Combine(tempPath, Path.GetFileName(sourceDllFullName));
+            File.Copy(sourceDllFullName, _tempFilePath, true);
         }
 
         private void Replace(string fileName, string targetFile)
@@ -74,6 +76,11 @@ namespace DllRefChanger
                 {
                     if (file.Name == fileName)
                     {
+                        if (!_hasBackuped)
+                        {
+                            BackupSourceDll(file.FullName);
+                            _hasBackuped = true;
+                        }
                         File.Copy(targetFile, file.FullName, true);
                     }
                 }
