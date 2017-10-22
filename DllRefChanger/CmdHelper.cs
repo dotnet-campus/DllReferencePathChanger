@@ -45,7 +45,7 @@ namespace DllRefChanger
             }
             catch (Exception ex)
             {
-                errMsg = ex.Message;
+                errMsg = ex.Message + " when invoke " + toolFile;
                 return false;
             }
             finally

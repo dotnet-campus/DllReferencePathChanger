@@ -155,6 +155,7 @@ namespace DllRefChangerSettingView
                 return;
             }
             HasUndo = false;
+            MessageInfo = "替换成功";
         }
 
         private bool CanReplaceDll()
@@ -175,6 +176,7 @@ namespace DllRefChangerSettingView
                 return;
             }
             HasUndo = true;
+            MessageInfo = "撤销成功";
         }
 
         public ICommand HelpCommand=>new RelayCommand(() =>

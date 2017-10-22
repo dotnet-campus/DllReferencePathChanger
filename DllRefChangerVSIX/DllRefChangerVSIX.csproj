@@ -189,6 +189,10 @@
       <Project>{9596287b-2018-485e-8c73-cbf26df4ce8a}</Project>
       <Name>DllRefChangerSettingView</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DllRefChanger\DllRefChanger.csproj">
+      <Project>{683f3e17-9dc3-4b5e-ab7e-ec46e869cdab}</Project>
+      <Name>DllRefChanger</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
