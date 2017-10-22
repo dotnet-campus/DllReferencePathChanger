@@ -37,6 +37,11 @@
         <local:MainViewModel/>
     </controls:MetroWindow.DataContext>
 
+    <controls:MetroWindow.RightWindowCommands>
+        <controls:WindowCommands>
+            <Button Command="{Binding HelpCommand}">HELP</Button>
+        </controls:WindowCommands>
+    </controls:MetroWindow.RightWindowCommands>
     <Grid>
 
         <Grid.RowDefinitions>

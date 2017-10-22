@@ -177,6 +177,9 @@ namespace DllRefChangerSettingView
             HasUndo = true;
         }
 
-
+        public ICommand HelpCommand=>new RelayCommand(() =>
+        {
+            System.Diagnostics.Process.Start("https://github.com/JasonGrass/DllReferencePathChanger");
+        });
     }
 }
