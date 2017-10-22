@@ -1,5 +1,8 @@
 # VS DLL引用替换插件
 
+Download:   
+[https://marketplace.visualstudio.com/items?itemName=Jasongrass.DLLReferencePathChangeAuto](https://marketplace.visualstudio.com/items?itemName=Jasongrass.DLLReferencePathChangeAuto)  
+  
 ## 使用
 
 加载要替换的DLL文件路径。
