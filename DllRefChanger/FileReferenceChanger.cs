@@ -36,15 +36,15 @@ namespace DllRefChanger
         private bool _hasBackuped = false;
 
         public void Change()
-        {    
-            Replace(Path.GetFileName(TargetDllPath),TargetDllPath);
+        {
+            Replace(Path.GetFileName(TargetDllPath), TargetDllPath);
         }
 
         public void UndoChange()
         {
             if (!CanUndoChange())
             {
-                return;
+                throw new InvalidOperationException($"不存在备份的DLL文件 {_tempFilePath}");
             }
             Replace(Path.GetFileName(TargetDllPath), _tempFilePath);
         }
@@ -65,25 +65,31 @@ namespace DllRefChanger
 
         private void Replace(string fileName, string targetFile)
         {
-            
+
             DirectoryInfo rootDir = Directory.GetParent(SolutionPath);
 
             Scan(rootDir);
 
             void Scan(DirectoryInfo dir)
             {
-                foreach (FileInfo file in dir.GetFiles())
+                // 只替换 Debug 目录下的dll文件
+                if (dir.Name.ToLower() == "debug")
                 {
-                    if (file.Name == fileName)
+                    foreach (FileInfo file in dir.GetFiles())
                     {
-                        if (!_hasBackuped)
+                        if (file.Name == fileName)
                         {
-                            BackupSourceDll(file.FullName);
-                            _hasBackuped = true;
+                            if (!_hasBackuped)
+                            {
+                                BackupSourceDll(file.FullName);
+                                _hasBackuped = true;
+                            }
+                            File.Copy(targetFile, file.FullName, true);
                         }
-                        File.Copy(targetFile, file.FullName, true);
+
                     }
                 }
+
                 foreach (DirectoryInfo directory in dir.GetDirectories())
                 {
                     Scan(directory);

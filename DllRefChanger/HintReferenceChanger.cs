@@ -64,7 +64,7 @@ namespace DllRefChanger
 
         public void Change()
         {
-            CanChange();
+            CheckCanChange();
 
             DirectoryInfo rootDir = Directory.GetParent(SolutionConfig.AbsolutePath);
             Scan(rootDir);
@@ -118,7 +118,7 @@ namespace DllRefChanger
             }
         }
 
-        private void CanChange()
+        private void CheckCanChange()
         {
             GitExecuter gitExecuter = new GitExecuter(GitExecuter.GetGitExePath(), SolutionConfig.AbsolutePath);
 

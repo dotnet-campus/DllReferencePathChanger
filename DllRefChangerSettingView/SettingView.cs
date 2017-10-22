@@ -6,13 +6,16 @@ using System.Threading.Tasks;
 
 namespace DllRefChangerSettingView
 {
-    public class SettingView
+    public static class SettingView
     {
         public static string SolutionFullName { get; private set; }
 
+        public static bool StartupFromVsix { get; private set; } = false;
+
         public static void ShowSettingWindow(string solutionPath)
         {
-            SolutionFullName = solutionPath;
+            StartupFromVsix = true;
+            SolutionFullName = solutionPath;           
             MainWindow mainWindow = new MainWindow();
             mainWindow.Show();
         }
