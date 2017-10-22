@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,6 +26,27 @@ namespace DllRefChangerSettingView
         public MainWindow()
         {
             InitializeComponent();   
+            this.Closing+= OnClosing;
+        }
+
+        private void OnClosing(object sender, CancelEventArgs cancelEventArgs)
+        {
+            MainViewModel mainViewModel = this.DataContext as MainViewModel;
+            if (mainViewModel != null)
+            {
+                if (!mainViewModel.HasUndo)
+                {
+                    if (MessageBoxResult.Cancel ==
+                        MessageBox.Show(
+                            "尚未对更改做出撤销操作，是否退出?", 
+                            "确定退出", 
+                            MessageBoxButton.OKCancel, 
+                            MessageBoxImage.Warning))
+                    {
+                        cancelEventArgs.Cancel = true;
+                    }
+                }
+            }
         }
     }
 }
