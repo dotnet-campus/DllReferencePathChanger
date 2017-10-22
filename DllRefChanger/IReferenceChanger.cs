@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DllRefChanger
 {
-    interface IReferenceChanger
+    public interface IReferenceChanger
     {
         void Change();
         void UndoChange();

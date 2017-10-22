@@ -4,7 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
+using DllRefChanger;
 using Microsoft.Win32;
 
 namespace DllRefChangerSettingView
@@ -100,6 +102,8 @@ namespace DllRefChangerSettingView
         public ICommand ReplaceDllCommand =>new RelayCommand(ReplaceDll,CanReplaceDll);
         public ICommand UndoReplaceCommand => new RelayCommand(UndoReplaceDll,()=>!HasUndo);
 
+        IReferenceChanger _referenceChanger;
+
         private void OpenSlnFile()
         {
             OpenFileDialog ofd = new OpenFileDialog
@@ -132,6 +136,24 @@ namespace DllRefChangerSettingView
 
         private void ReplaceDll()
         {
+            try
+            {
+                if (IsReplaceHintRef)
+                {
+                    _referenceChanger = new HintReferenceChanger(SolutionPath, DllPath);
+                }
+                else if (IsReplaceFile)
+                {
+                    _referenceChanger = new FileReferenceChanger(SolutionPath, DllPath);
+                }
+                _referenceChanger.Change();
+            }
+            catch (Exception ex)
+            {
+                MessageInfo = ex.Message;
+                MessageBox.Show(MessageInfo, "替换发生错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
             HasUndo = false;
         }
 
@@ -142,6 +164,16 @@ namespace DllRefChangerSettingView
 
         private void UndoReplaceDll()
         {
+            try
+            {
+                _referenceChanger.UndoChange();
+            }
+            catch (Exception ex)
+            {
+                MessageInfo = ex.Message;
+                MessageBox.Show(MessageInfo, "撤销替换发生错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
             HasUndo = true;
         }
 
