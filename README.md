@@ -3,6 +3,9 @@
 Download:   
 [https://marketplace.visualstudio.com/items?itemName=Jasongrass.DLLReferencePathChangeAuto](https://marketplace.visualstudio.com/items?itemName=Jasongrass.DLLReferencePathChangeAuto)  
   
+Visual Studio Extensions
+[https://visualstudiogallery.msdn.microsoft.com/](https://visualstudiogallery.msdn.microsoft.com/)  
+  
 ## 使用
 
 加载要替换的DLL文件路径。
