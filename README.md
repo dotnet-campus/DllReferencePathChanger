@@ -7,7 +7,9 @@ Visual Studio Extensions
 [https://visualstudiogallery.msdn.microsoft.com/](https://visualstudiogallery.msdn.microsoft.com/)  
   
 ## 使用
-
+  
+* [使用指南](http://jgrass.cc/2017-10-auto-dll-reference-change-tool/)   
+  
 加载要替换的DLL文件路径。
 
 点击`替换`可以将当前解决方案中的引用的同名DLL文件替换为选定的DLL文件。
