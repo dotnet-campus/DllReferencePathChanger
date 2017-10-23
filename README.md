@@ -45,5 +45,5 @@ HintPath引用替换 是替换csproj中的引用路径，一般用于替换Nuget
 ## 代码使用说明：
   需要为 DllRefChanger 和 DllRefChangerSettingView 两个工程添加签名才能正确编译。  
    
-  ![](http://ww1.sinaimg.cn/large/599d0f25gy1fksjfsitzwj20n70dhwf6.jpg)  
+  ![](https://github.com/JasonGrass/DllReferencePathChanger/blob/master/Img/20171023221524.png)   
   
