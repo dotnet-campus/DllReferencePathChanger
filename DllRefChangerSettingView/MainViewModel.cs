@@ -19,6 +19,10 @@ namespace DllRefChangerSettingView
             if (SettingView.StartupFromVsix)
             {
                 SolutionPath = SettingView.SolutionFullName;
+                if (!string.IsNullOrWhiteSpace(SettingView.DllFileName))
+                {
+                    DllPath = SettingView.DllFileName;
+                }
             }
             MessageInfo =
                 "HintPath引用替换 是替换csproj中的引用路径，一般用于替换Nuget引用\n" +

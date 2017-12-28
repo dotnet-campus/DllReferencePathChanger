@@ -10,12 +10,15 @@ namespace DllRefChangerSettingView
     {
         public static string SolutionFullName { get; private set; }
 
+        public static string DllFileName { get; private set; }
+
         public static bool StartupFromVsix { get; private set; } = false;
 
-        public static void ShowSettingWindow(string solutionPath)
+        public static void ShowSettingWindow(string solutionPath, string dllFile = null)
         {
             StartupFromVsix = true;
-            SolutionFullName = solutionPath;           
+            SolutionFullName = solutionPath;
+            DllFileName = dllFile;
             MainWindow mainWindow = new MainWindow();
             mainWindow.Show();
         }

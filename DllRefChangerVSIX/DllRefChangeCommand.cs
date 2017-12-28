@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel.Design;
 using System.Globalization;
+using System.Windows.Forms;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.Win32;
 
 namespace DllRefChangerVSIX
 {
@@ -99,12 +101,11 @@ namespace DllRefChangerVSIX
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
-
             var solution = DTE.Solution;
             if (!solution.IsOpen)
             {
-                string message = "你还没有打开一个解决方案哟";
-                string title = "空的解决方案";
+                string message = "你还没有打开一个解决方案哟/None any solution here.";
+                string title = "空的解决方案/Empty Solution";
 
                 VsShellUtilities.ShowMessageBox(
                     this.ServiceProvider,
@@ -117,7 +118,20 @@ namespace DllRefChangerVSIX
             }
             else
             {
-                DllRefChangerSettingView.SettingView.ShowSettingWindow(solution.FullName);
+                string dll = string.Empty;
+                OpenFileDialog ofd = new OpenFileDialog
+                {
+                    Filter = "Dll File(*.dll)|*.dll",
+                    DefaultExt = ".dll",
+                    Multiselect = false,
+                    Title = "选择用于替换的DLL文件(解决方案中同名DLL将被替换)"
+                };
+                if (ofd.ShowDialog() == true)
+                {
+                    dll = ofd.FileName;
+                }
+
+                DllRefChangerSettingView.SettingView.ShowSettingWindow(solution.FullName, dll);
             }
 
 

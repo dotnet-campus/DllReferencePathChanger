@@ -66,7 +66,10 @@ namespace DllRefChanger
         {
             CheckCanChange();
 
-            DirectoryInfo rootDir = Directory.GetParent(SolutionConfig.AbsolutePath);
+            GitExecuter gitExecuter = new GitExecuter(GitExecuter.GetGitExePath(), SolutionConfig.AbsolutePath);
+
+            // 有些工程的保存路径不按套路出牌，那就搜索全部git管理目录下的文件夹
+            DirectoryInfo rootDir = Directory.GetParent(gitExecuter.GitDir);
             Scan(rootDir);
 
 
