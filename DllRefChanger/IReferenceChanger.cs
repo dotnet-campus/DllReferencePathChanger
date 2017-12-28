@@ -8,6 +8,7 @@ namespace DllRefChanger
 {
     public interface IReferenceChanger
     {
+        string Message { get; }
         void Change();
         void UndoChange();
     }

@@ -62,6 +62,8 @@ namespace DllRefChanger
             SolutionConfig.TargetDllAbsolutePath = path;
         }
 
+        public string Message { get; private set; }
+
         public void Change()
         {
             CheckCanChange();
@@ -79,7 +81,15 @@ namespace DllRefChanger
                 {
                     if (file.Extension == ".csproj")
                     {
-                        ChangeToTarget(file.FullName);
+                        try
+                        {
+                            ChangeToTarget(file.FullName);
+                        }
+                        catch (Exception ex)
+                        {
+                            Message += $"#Fail : {file.Name}; {ex.Message}\n";
+                        }
+                        
                     }
                 }
 
@@ -166,7 +176,7 @@ namespace DllRefChanger
 
             if (hintPath == null)
             {
-                throw new ArgumentNullException(nameof(hintPath));
+                throw new ArgumentNullException(nameof(hintPath), "没有引用值/No HintPath value");
             }
 
             if (specificVersion == null)

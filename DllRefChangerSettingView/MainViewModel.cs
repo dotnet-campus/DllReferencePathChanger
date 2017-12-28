@@ -159,7 +159,7 @@ namespace DllRefChangerSettingView
                 return;
             }
             HasUndo = false;
-            MessageInfo = "替换成功";
+            MessageInfo = "替换完成\n" + _referenceChanger.Message;
         }
 
         private bool CanReplaceDll()

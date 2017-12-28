@@ -35,6 +35,8 @@ namespace DllRefChanger
         private string _tempFilePath;
         private bool _hasBackuped = false;
 
+        public string Message { get; private set; }
+
         public void Change()
         {
             Replace(Path.GetFileName(TargetDllPath), TargetDllPath);
