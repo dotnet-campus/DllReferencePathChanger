@@ -127,7 +127,7 @@ namespace DllRefChangerSettingView
         {
             OpenFileDialog ofd = new OpenFileDialog
             {
-                Filter = "DLL文件(*.dll)|*.dll",
+                Filter = "DLL文件(*.dll)|*.dll|Exe文件(*.exe)|*.exe|All(*.*)|*.*",
                 DefaultExt = ".dll",
                 Multiselect = false,
             };
