@@ -52,7 +52,22 @@ namespace DllRefChanger
             XElement selectElement = null;
             foreach (XElement itemGroup in itemGroups)
             {
-                selectElement = itemGroup?.Elements().FirstOrDefault(e => e.Attribute("Include")?.Value.Contains(SolutionConfig.DllName) ?? false);
+                selectElement = itemGroup?.Elements().FirstOrDefault(e =>
+                {
+                    /*value : 
+                     "System.Composition.AttributedModel, Version=1.0.31.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"
+                     */
+
+                    string value = e.Attribute("Include")?.Value;
+                    if (string.IsNullOrEmpty(value))
+                    {
+                        return false;
+                    }
+
+                    string dllName = value.Split(',').FirstOrDefault();
+                    return dllName?.Trim() == SolutionConfig.DllName.Trim();
+                });
+
                 if (selectElement != null)
                 {
                     break;
