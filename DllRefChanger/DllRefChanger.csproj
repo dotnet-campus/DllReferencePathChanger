@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CmdHelper.cs" />
+    <Compile Include="CsprojFileChanger.cs" />
     <Compile Include="FileReferenceChanger.cs" />
     <Compile Include="GitExecuter.cs" />
     <Compile Include="HintReferenceChanger.cs" />
