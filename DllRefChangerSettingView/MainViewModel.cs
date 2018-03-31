@@ -32,7 +32,8 @@ namespace DllRefChangerSettingView
                 "特别注意：\n" +
                 "csproj 和 HintPath 引用替换是对 csproj 文件进行修改，" +
                 "撤销操作是使用 git checkout 命令撤销所有对 csproj 和 sln 文件的修改，如果有文件添加和删除等影响 csproj 文件的操作，" +
-                "请谨慎使用自动撤销";
+                "请谨慎使用自动撤销。\n" +
+                "再啰嗦一句：csproj 引用替换功能需要安装 .net core sdk";
         }
 
         private string _solutionPath;
