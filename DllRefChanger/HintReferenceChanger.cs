@@ -40,8 +40,24 @@ namespace DllRefChanger
 
             XDocument doc = XDocument.Load(csprojFile);
             List<XElement> itemGroups = doc.Root?.Elements().Where(e => e.Name.LocalName == "ItemGroup").ToList();
-            XElement itemGroup = itemGroups?.FirstOrDefault(e => e.Elements().Any(ele => ele.Name.LocalName == "Reference"));
-            XElement selectElement = itemGroup?.Elements().FirstOrDefault(e => e.Attribute("Include")?.Value.Contains(SolutionConfig.DllName) ?? false);
+
+            // 找到包含 Reference 节点的 ItemGroup 
+            itemGroups = itemGroups?.Where(e => e.Elements().Any(ele => ele.Name.LocalName == "Reference")).ToList();
+
+            if (itemGroups == null)
+            {
+                return;
+            }
+
+            XElement selectElement = null;
+            foreach (XElement itemGroup in itemGroups)
+            {
+                selectElement = itemGroup?.Elements().FirstOrDefault(e => e.Attribute("Include")?.Value.Contains(SolutionConfig.DllName) ?? false);
+                if (selectElement != null)
+                {
+                    break;
+                }
+            }
 
             if (selectElement == null)
             {
