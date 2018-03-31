@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using DllRefChanger;
+using DllRefChanger.Changer;
 using Microsoft.Win32;
 
 namespace DllRefChangerSettingView
@@ -21,20 +22,27 @@ namespace DllRefChangerSettingView
                 SolutionPath = SettingView.SolutionFullName;
                 if (!string.IsNullOrWhiteSpace(SettingView.DllFileName))
                 {
-                    DllPath = SettingView.DllFileName;
+                    NewFilePath = SettingView.DllFileName;
                 }
             }
             MessageInfo =
-                "HintPath引用替换 是替换csproj中的引用路径，一般用于替换Nuget引用\n" +
-                "文件替换 是简单地对Debug目录下的DLL文件进行替换";
+                "csproj引用替换:\n将引用dll的方式转换为工程引用的方式，调试CBB源码将非常方便\n" +
+                "HintPath引用替换:\n替换csproj中的引用路径，一般用于替换Nuget引用\n" +
+                "文件替换:\n简单地对Debug目录下的DLL文件进行替换\n\n" +
+                "特别注意：\n" +
+                "csproj 和 HintPath 引用替换是对 csproj 文件进行修改，" +
+                "撤销操作是使用 git checkout 命令撤销所有对 csproj 和 sln 文件的修改，如果有文件添加和删除等影响 csproj 文件的操作，" +
+                "请谨慎使用自动撤销";
         }
 
         private string _solutionPath;
-        private string _dllPath;
-        private bool _isReplaceHintRef = true;
+        private string _newFilePath;
+        private bool _isReplaceHintRef;
         private bool _isReplaceFile;
+        private bool _isReplaceCsproj = true;
         private string _messageInfo;
         private bool _hasUndo = true;
+        private bool _advancedMode;
 
         public string SolutionPath
         {
@@ -46,12 +54,12 @@ namespace DllRefChangerSettingView
             }
         }
 
-        public string DllPath
+        public string NewFilePath
         {
-            get => _dllPath;
+            get => _newFilePath;
             set
             {
-                _dllPath = value;
+                _newFilePath = value;
                 OnPropertyChanged();
             }
         }
@@ -78,6 +86,19 @@ namespace DllRefChangerSettingView
                 _isReplaceFile = value;
                 OnPropertyChanged();
             }
+        }    
+
+        public bool IsReplaceCsproj
+        {
+            get => _isReplaceCsproj;
+            set
+            {
+                if (_isReplaceCsproj != value)
+                {
+                    _isReplaceCsproj = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         public string MessageInfo
@@ -97,6 +118,23 @@ namespace DllRefChangerSettingView
             {
                 _hasUndo = value;
                 OnPropertyChanged();
+            }
+        }
+    
+        public bool AdvancedMode
+        {
+            get => _advancedMode;
+            set
+            {
+                if (_advancedMode != value)
+                {
+                    _advancedMode = value;
+                    if (_referenceChanger != null)
+                    {
+                        _referenceChanger.UseDefaultCheckCanChange = !value;
+                    }
+                    OnPropertyChanged();
+                }
             }
         }
 
@@ -125,16 +163,26 @@ namespace DllRefChangerSettingView
 
         private void OpenDllFile()
         {
+            string filter = "Dll File(*.dll)|*.dll|Exe File(*.exe)|*.exe|All(*.*)|*.*";
+            if (IsReplaceCsproj)
+            {
+                filter = "csproj File(*.csproj)|*.csporj|All(*.*)|*.*";
+            }
+            else if (IsReplaceHintRef)
+            {
+                filter = "Dll File(*.dll)|*.dll|All(*.*)|*.*";
+            }
+
             OpenFileDialog ofd = new OpenFileDialog
             {
-                Filter = "DLL文件(*.dll)|*.dll|Exe文件(*.exe)|*.exe|All(*.*)|*.*",
+                Filter = filter,
                 DefaultExt = ".dll",
                 Multiselect = false,
             };
             bool? result = ofd.ShowDialog();
             if (result == true)
             {
-                DllPath = ofd.FileName;
+                NewFilePath = ofd.FileName;
             }
         }
 
@@ -144,11 +192,15 @@ namespace DllRefChangerSettingView
             {
                 if (IsReplaceHintRef)
                 {
-                    _referenceChanger = new HintReferenceChanger(SolutionPath, DllPath);
+                    _referenceChanger = new HintReferenceChanger(SolutionPath, NewFilePath);
                 }
                 else if (IsReplaceFile)
                 {
-                    _referenceChanger = new FileReferenceChanger(SolutionPath, DllPath);
+                    _referenceChanger = new FileReferenceChanger(SolutionPath, NewFilePath);
+                }
+                else if (IsReplaceCsproj)
+                {
+                    _referenceChanger = new ProjReferneceChanger(SolutionPath, NewFilePath);
                 }
                 _referenceChanger.Change();
             }
@@ -164,7 +216,7 @@ namespace DllRefChangerSettingView
 
         private bool CanReplaceDll()
         {
-            return File.Exists(SolutionPath) && File.Exists(DllPath);
+            return File.Exists(SolutionPath) && File.Exists(NewFilePath);
         }
 
         private void UndoReplaceDll()
