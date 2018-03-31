@@ -38,6 +38,7 @@ namespace DllRefChanger
 
         protected override void ChangeToTarget(string csprojFile)
         {
+
             XDocument doc = XDocument.Load(csprojFile);
             var selectElement = FindReferenceItem(doc);
             if (selectElement == null)
@@ -45,9 +46,7 @@ namespace DllRefChanger
                 return;
             }
 
-            // 删除此节点
-            selectElement.Remove();
-
+            // 这里是新建的实例，对其增删改无效哦
             List<XElement> itemGroups = doc.Root?.Elements().Where(e => e.Name.LocalName == "ItemGroup").ToList();
 
             if (itemGroups == null)
@@ -59,9 +58,12 @@ namespace DllRefChanger
             var projectReferenceItemGroup = itemGroups.FirstOrDefault(e => e.Elements().Any(ele => ele.Name.LocalName == "ProjectReference"));
             if (projectReferenceItemGroup == null)
             {
-                projectReferenceItemGroup = new XElement("ItemGroup");
-                itemGroups.Add(projectReferenceItemGroup);
+                projectReferenceItemGroup = new XElement(XName.Get("ItemGroup", doc.Root.Name.NamespaceName));
+                doc.Root.Add(projectReferenceItemGroup);
             }
+
+            // 删除此节点
+            selectElement.Remove();
 
             /*
             <ProjectReference Include="..\..\..\Dependencies\Cvte.Paint\Cvte.Paint.Chart\Cvte.Paint.Chart.csproj">
@@ -70,13 +72,19 @@ namespace DllRefChanger
             </ProjectReference>
              */
 
+            string ns = projectReferenceItemGroup.Name.NamespaceName;
             // 添加新的 ProjectReference 节点 
-            XElement projectReferenceItem = new XElement("ProjectReference");
-            var includeValue = PathHelper.GetRelativePath(csprojFile, SourceCsprojFile);
+            XElement projectReferenceItem = new XElement(XName.Get("ProjectReference",ns));
+            //var includeValue = PathHelper.GetRelativePath(SolutionConfig.AbsolutePath, SourceCsprojFile);
+            var includeValue = SourceCsprojFile;
 
             projectReferenceItem.SetAttributeValue(XName.Get("Include"), includeValue);
-            projectReferenceItem.AddFirst(new XElement("Project") { Value = SourceCsprojGuid });
-            projectReferenceItem.AddFirst(new XElement("Name") { Value = SourceCsprojName });
+
+            // 这句添加没有必要
+            ////projectReferenceItem.AddFirst(new XElement(XName.Get("Project")) { Value = SourceCsprojGuid });
+            ////projectReferenceItem.AddFirst(new XElement(XName.Get("Name")) { Value = SourceCsprojName });
+
+            projectReferenceItemGroup.Add(projectReferenceItem);
 
             doc.Save(csprojFile);
         }
@@ -104,12 +112,15 @@ namespace DllRefChanger
 
             foreach (XElement propertyGroup in itemGroups)
             {
-                var guid = propertyGroup.Element("ProjectGuid")?.Value;
+                var guid = propertyGroup.Elements().FirstOrDefault(e => e.Name.LocalName == "ProjectGuid")?.Value;
+
                 if (string.IsNullOrEmpty(guid))
                 {
                     continue;
                 }
-                var assemblyName = propertyGroup.Element("AssemblyName")?.Value;
+
+                // AssemblyName
+                var assemblyName = propertyGroup.Elements().FirstOrDefault(e => e.Name.LocalName == "AssemblyName")?.Value;
 
                 SourceCsprojGuid = guid;
                 SourceCsprojName = assemblyName;
