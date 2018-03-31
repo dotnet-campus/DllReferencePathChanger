@@ -108,7 +108,13 @@ namespace DllRefChanger
 
             if (!success)
             {
-                throw new InvalidOperationException($"哎呀，恢复csproj文件时出错了：{err}");
+                throw new InvalidOperationException($"哎呀，恢复 csproj 文件时出错了：{err}");
+            }
+
+            success = gitExecuter.Execute("checkout *.sln", out string result2, out string err2);
+            if (!success)
+            {
+                throw new InvalidOperationException($"哎呀，恢复 sln 文件时出错了：{err2}");
             }
 
         }
@@ -138,7 +144,12 @@ namespace DllRefChanger
 
             if (result.Contains(".csproj"))
             {
-                throw new InvalidOperationException("有尚未提交的对csproj文件的修改，请先撤销或者提交这些修改");
+                throw new InvalidOperationException("有尚未提交的对 csproj 文件的修改，请先撤销或者提交这些修改");
+            }
+
+            if (result.Contains(".sln"))
+            {
+                throw new InvalidOperationException("有尚未提交的对 sln 文件的修改，请先撤销或者提交这些修改");
             }
         }
 

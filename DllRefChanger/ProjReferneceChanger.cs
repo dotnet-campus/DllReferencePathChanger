@@ -26,19 +26,8 @@ namespace DllRefChanger
         /// </summary>
         public string SourceCsprojFile => SolutionConfig.NewFileAbsolutePath;
 
-        /// <summary>
-        /// 替换源工程的 GUID
-        /// </summary>
-        public string SourceCsprojGuid { get; set; }
-
-        /// <summary>
-        /// 替换源工程的名称
-        /// </summary>
-        public string SourceCsprojName { get; set; }
-
         protected override void ChangeToTarget(string csprojFile)
         {
-
             XDocument doc = XDocument.Load(csprojFile);
             var selectElement = FindReferenceItem(doc);
             if (selectElement == null)
@@ -46,7 +35,7 @@ namespace DllRefChanger
                 return;
             }
 
-            // 这里是新建的实例，对其增删改无效哦
+            // 这里是新建的实例，对其增删改无效哦。
             List<XElement> itemGroups = doc.Root?.Elements().Where(e => e.Name.LocalName == "ItemGroup").ToList();
 
             if (itemGroups == null)
@@ -54,86 +43,64 @@ namespace DllRefChanger
                 return;
             }
 
-            // 找到包含 ProjectReference 节点的 ItemGroup 
-            var projectReferenceItemGroup = itemGroups.FirstOrDefault(e => e.Elements().Any(ele => ele.Name.LocalName == "ProjectReference"));
-            if (projectReferenceItemGroup == null)
-            {
-                projectReferenceItemGroup = new XElement(XName.Get("ItemGroup", doc.Root.Name.NamespaceName));
-                doc.Root.Add(projectReferenceItemGroup);
-            }
-
             // 删除此节点
             selectElement.Remove();
 
-            /*
-            <ProjectReference Include="..\..\..\Dependencies\Cvte.Paint\Cvte.Paint.Chart\Cvte.Paint.Chart.csproj">
-                <Project>{3e1f8f4b-5f57-4f8f-9224-9ea9b987b880}</Project>
-                <Name>Cvte.Paint.Chart</Name>
-            </ProjectReference>
-             */
-
-            string ns = projectReferenceItemGroup.Name.NamespaceName;
-            // 添加新的 ProjectReference 节点 
-            XElement projectReferenceItem = new XElement(XName.Get("ProjectReference",ns));
-            //var includeValue = PathHelper.GetRelativePath(SolutionConfig.AbsolutePath, SourceCsprojFile);
-            var includeValue = SourceCsprojFile;
-
-            projectReferenceItem.SetAttributeValue(XName.Get("Include"), includeValue);
-
-            // 这句添加没有必要
-            ////projectReferenceItem.AddFirst(new XElement(XName.Get("Project")) { Value = SourceCsprojGuid });
-            ////projectReferenceItem.AddFirst(new XElement(XName.Get("Name")) { Value = SourceCsprojName });
-
-            projectReferenceItemGroup.Add(projectReferenceItem);
-
             doc.Save(csprojFile);
+
+            InsertProject(csprojFile);
         }
 
-        protected override void BeforeChange()
+
+        /// <summary>
+        /// 使用 dotnet.exe 工具添加工程和解决方案的引用
+        /// </summary>
+        /// <param name="csprojFile"></param>
+        private void InsertProject(string csprojFile)
         {
-            if (!File.Exists(SourceCsprojFile))
+            if (!CmdHelper.ExecuteTool(DotNetExe, $" add {csprojFile} reference {SourceCsprojFile}", 
+                out string result, out string errorMsg))
             {
-                throw new FileNotFoundException(SourceCsprojFile);
+                throw new NotSupportedException("fail when add reference to csproj use dotnet.exe " + errorMsg);
             }
 
-            AnalyzeSourceCsprojFile(SourceCsprojFile);
-            base.BeforeChange();
+            if (!CmdHelper.ExecuteTool(DotNetExe, $"sln {SolutionConfig.AbsolutePath} add {SourceCsprojFile}",
+                out string result2, out string errorMsg2))
+            {
+                throw new NotSupportedException("fail when add reference to sln use dotnet.exe " + errorMsg);
+            }
         }
 
-        private void AnalyzeSourceCsprojFile(string csprojFile)
+        private string DotNetExe => GetDotNetExeFileDefault();
+
+        private string GetDotNetExeFileDefault()
         {
-            XDocument doc = XDocument.Load(csprojFile);
-            List<XElement> itemGroups = doc.Root?.Elements().Where(e => e.Name.LocalName == "PropertyGroup").ToList();
+            var dotnetExePath = @"dotnet\dotnet.exe";
 
-            if (itemGroups == null)
+            Func<string, string, string> exist = (files, filesx86) =>
             {
-                throw new ArgumentException("Broken csproj file, can not fine ‘PropertyGroup’ item");
-            }
-
-            foreach (XElement propertyGroup in itemGroups)
-            {
-                var guid = propertyGroup.Elements().FirstOrDefault(e => e.Name.LocalName == "ProjectGuid")?.Value;
-
-                if (string.IsNullOrEmpty(guid))
+                var gitFile = Path.Combine(files, dotnetExePath);
+                if (File.Exists(gitFile))
                 {
-                    continue;
+                    return gitFile;
                 }
+                gitFile = Path.Combine(filesx86, dotnetExePath);
+                if (File.Exists(gitFile))
+                {
+                    return gitFile;
+                }
+                return string.Empty;
+            };
 
-                // AssemblyName
-                var assemblyName = propertyGroup.Elements().FirstOrDefault(e => e.Name.LocalName == "AssemblyName")?.Value;
-
-                SourceCsprojGuid = guid;
-                SourceCsprojName = assemblyName;
-
-                break;
-            }
-
-            if (string.IsNullOrWhiteSpace(SourceCsprojGuid) || string.IsNullOrWhiteSpace(SourceCsprojName))
+            var programFiles = @"C:\Program Files";
+            var programFilesx86 = @"C:\Program Files (x86)";
+            var file = exist(programFiles, programFilesx86);
+            if (!string.IsNullOrEmpty(file))
             {
-                throw new InvalidOperationException($"Can not get ProjectGuid or AssemblyName of {csprojFile}");
+                return file;
             }
 
+            return "dotnet.exe";
         }
-
     }
 }
