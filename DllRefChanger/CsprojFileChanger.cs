@@ -15,7 +15,7 @@ namespace DllRefChanger
             string solutionName,
             string dllName,
             string sourceDllVersion,
-            string targetDllPath
+            string newFilePath
             )
         {
             SolutionConfig = new SolutionConfig()
@@ -24,22 +24,22 @@ namespace DllRefChanger
                 Name = solutionName,
                 DllName = dllName,
                 SourceDllVersion = sourceDllVersion,
-                TargetDllAbsolutePath = targetDllPath
+                NewFileAbsolutePath = newFilePath
             };
             CheckFile();
         }
 
         protected CsprojFileChanger(
             string solutionPath,
-            string targetDllPath)
+            string newFilePath)
         {
             SolutionConfig = new SolutionConfig()
             {
                 AbsolutePath = solutionPath,
                 Name = Path.GetFileNameWithoutExtension(solutionPath),
-                DllName = Path.GetFileNameWithoutExtension(targetDllPath),
+                DllName = Path.GetFileNameWithoutExtension(newFilePath),
                 SourceDllVersion = string.Empty,
-                TargetDllAbsolutePath = targetDllPath
+                NewFileAbsolutePath = newFilePath
             };
             CheckFile();
         }
@@ -52,7 +52,7 @@ namespace DllRefChanger
             {
                 throw new FileNotFoundException("你逗我！这个文件不存在。", path);
             }
-            SolutionConfig.TargetDllAbsolutePath = path;
+            SolutionConfig.NewFileAbsolutePath = path;
         }
 
         public string Message { get; private set; }
@@ -60,6 +60,8 @@ namespace DllRefChanger
         public void Change()
         {
             CheckCanChange();
+
+            BeforeChange();
 
             GitExecuter gitExecuter = new GitExecuter(GitExecuter.GetGitExePath(), SolutionConfig.AbsolutePath);
 
@@ -117,9 +119,9 @@ namespace DllRefChanger
             {
                 throw new FileNotFoundException("文件不存在", SolutionConfig.AbsolutePath);
             }
-            if (!File.Exists(SolutionConfig.TargetDllAbsolutePath))
+            if (!File.Exists(SolutionConfig.NewFileAbsolutePath))
             {
-                throw new FileNotFoundException("文件不存在", SolutionConfig.TargetDllAbsolutePath);
+                throw new FileNotFoundException("文件不存在", SolutionConfig.NewFileAbsolutePath);
             }
         }
 
@@ -141,6 +143,71 @@ namespace DllRefChanger
         }
 
         protected abstract void ChangeToTarget(string csprojFile);
+
+        protected virtual void BeforeChange()
+        {
+            // 如果在替换之前需要进行某些操作，在子类中重新该方法以实现该操作
+        }
+
+        /// <summary>
+        /// 找到 csprojFile 文件中包含待替换dll信息的 Reference 节点；没有找到则返回 null .
+        /// </summary>
+        /// <returns></returns>
+        protected XElement FindReferenceItem(XDocument doc)
+        {
+            List<XElement> itemGroups = doc.Root?.Elements().Where(e => e.Name.LocalName == "ItemGroup").ToList();
+
+            // 找到包含 Reference 节点的 ItemGroup 
+            itemGroups = itemGroups?.Where(e => e.Elements().Any(ele => ele.Name.LocalName == "Reference")).ToList();
+
+            if (itemGroups == null)
+            {
+                return null;
+            }
+
+            XElement selectElement = null;
+            foreach (XElement itemGroup in itemGroups)
+            {
+                selectElement = itemGroup?.Elements().FirstOrDefault(e =>
+                {
+
+                    /*value : 
+                     "System.Composition.AttributedModel, Version=1.0.31.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"
+                     */
+
+                    string value = e.Attribute("Include")?.Value;
+                    if (string.IsNullOrEmpty(value))
+                    {
+                        return false;
+                    }
+
+                    string dllName = value.Split(',').FirstOrDefault();
+                    return dllName?.Trim() == SolutionConfig.DllName.Trim();
+
+                });
+                if (selectElement != null)
+                {
+                    break;
+                }
+            }
+
+            if (selectElement == null)
+            {
+                return null;
+            }
+
+
+            if (!string.IsNullOrEmpty(SolutionConfig.SourceDllVersion))
+            {
+                // 指定了版本号，如果版本不匹配，返回
+                if (!selectElement.Attribute("Include")?.Value.Contains(SolutionConfig.SourceDllVersion) ?? true)
+                {
+                    return null;
+                }
+            }
+
+            return selectElement;
+        }
 
 
     }

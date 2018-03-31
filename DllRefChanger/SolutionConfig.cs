@@ -31,7 +31,7 @@ namespace DllRefChanger
         /// <summary>
         /// 目标DLL的绝对路径
         /// </summary>
-        public string TargetDllAbsolutePath { get; set; }
+        public string NewFileAbsolutePath { get; set; }
 
     }
 }

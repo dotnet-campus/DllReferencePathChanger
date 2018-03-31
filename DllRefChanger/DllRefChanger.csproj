@@ -54,6 +54,7 @@
     <Compile Include="HintReferenceChanger.cs" />
     <Compile Include="IReferenceChanger.cs" />
     <Compile Include="PathHelper.cs" />
+    <Compile Include="ProjReferneceChanger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SolutionConfig.cs" />
   </ItemGroup>

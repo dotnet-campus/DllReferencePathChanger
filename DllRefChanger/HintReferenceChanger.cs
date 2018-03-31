@@ -22,70 +22,27 @@ namespace DllRefChanger
             string solutionName,
             string dllName,
             string sourceDllVersion,
-            string targetDllPath
-            ) : base(solutionPath,solutionName,dllName,sourceDllVersion,targetDllPath)
+            string newFilePath
+            ) : base(solutionPath,solutionName,dllName,sourceDllVersion,newFilePath)
         {
 
         }
 
         public HintReferenceChanger(
             string solutionPath,
-            string targetDllPath):base(solutionPath,targetDllPath)
+            string newFilePath):base(solutionPath,newFilePath)
         {
 
         }
 
         protected override void ChangeToTarget(string csprojFile)
         {
-
             XDocument doc = XDocument.Load(csprojFile);
-            List<XElement> itemGroups = doc.Root?.Elements().Where(e => e.Name.LocalName == "ItemGroup").ToList();
 
-            // 找到包含 Reference 节点的 ItemGroup 
-            itemGroups = itemGroups?.Where(e => e.Elements().Any(ele => ele.Name.LocalName == "Reference")).ToList();
-
-            if (itemGroups == null)
-            {
-                return;
-            }
-
-            XElement selectElement = null;
-            foreach (XElement itemGroup in itemGroups)
-            {
-                selectElement = itemGroup?.Elements().FirstOrDefault(e =>
-                {
-                    /*value : 
-                     "System.Composition.AttributedModel, Version=1.0.31.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"
-                     */
-
-                    string value = e.Attribute("Include")?.Value;
-                    if (string.IsNullOrEmpty(value))
-                    {
-                        return false;
-                    }
-
-                    string dllName = value.Split(',').FirstOrDefault();
-                    return dllName?.Trim() == SolutionConfig.DllName.Trim();
-                });
-
-                if (selectElement != null)
-                {
-                    break;
-                }
-            }
-
+            var selectElement = FindReferenceItem(doc);
             if (selectElement == null)
             {
                 return;
-            }
-
-            if (!string.IsNullOrEmpty(SolutionConfig.SourceDllVersion))
-            {
-                // 指定了版本号，如果版本不匹配，返回
-                if (!selectElement.Attribute("Include")?.Value.Contains(SolutionConfig.SourceDllVersion) ?? true)
-                {
-                    return;
-                }
             }
 
             XElement specificVersion = selectElement.Elements().FirstOrDefault(e => e.Name.LocalName == "SpecificVersion");
@@ -110,7 +67,7 @@ namespace DllRefChanger
                 specificVersion.Value = "False";
             }
 
-            hintPath.Value = PathHelper.GetRelativePath(csprojFile, SolutionConfig.TargetDllAbsolutePath);
+            hintPath.Value = PathHelper.GetRelativePath(csprojFile, SolutionConfig.NewFileAbsolutePath);
 
             doc.Save(csprojFile);
 
