@@ -70,36 +70,7 @@ namespace DllRefChanger.Changer
             }
         }
 
-        private string DotNetExe => GetDotNetExeFileDefault();
+        private string DotNetExe => ExeFileHelper.GetDotNetExePath();
 
-        private string GetDotNetExeFileDefault()
-        {
-            var dotnetExePath = @"dotnet\dotnet.exe";
-
-            Func<string, string, string> exist = (files, filesx86) =>
-            {
-                var gitFile = Path.Combine(files, dotnetExePath);
-                if (File.Exists(gitFile))
-                {
-                    return gitFile;
-                }
-                gitFile = Path.Combine(filesx86, dotnetExePath);
-                if (File.Exists(gitFile))
-                {
-                    return gitFile;
-                }
-                return string.Empty;
-            };
-
-            var programFiles = @"C:\Program Files";
-            var programFilesx86 = @"C:\Program Files (x86)";
-            var file = exist(programFiles, programFilesx86);
-            if (!string.IsNullOrEmpty(file))
-            {
-                return file;
-            }
-
-            return "dotnet.exe";
-        }
     }
 }

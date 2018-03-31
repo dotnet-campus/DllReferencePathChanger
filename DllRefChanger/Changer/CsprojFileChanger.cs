@@ -62,7 +62,7 @@ namespace DllRefChanger.Changer
 
             BeforeChange();
 
-            GitExecuter gitExecuter = new GitExecuter(GitExecuter.GetGitExePath(), SolutionConfig.AbsolutePath);
+            GitExecuter gitExecuter = new GitExecuter(ExeFileHelper.GetGitExePath(), SolutionConfig.AbsolutePath);
 
             // 有些工程的保存路径不按套路出牌，那就搜索全部git管理目录下的文件夹
             DirectoryInfo rootDir = Directory.GetParent(gitExecuter.GitDir);
@@ -101,7 +101,7 @@ namespace DllRefChanger.Changer
 
         public void UndoChange()
         {
-            GitExecuter gitExecuter = new GitExecuter(GitExecuter.GetGitExePath(), SolutionConfig.AbsolutePath);
+            GitExecuter gitExecuter = new GitExecuter(ExeFileHelper.GetGitExePath(), SolutionConfig.AbsolutePath);
 
             bool success = gitExecuter.Execute("checkout *.csproj", out string result, out string err);
 
@@ -132,7 +132,7 @@ namespace DllRefChanger.Changer
 
         private void CheckCanChange()
         {
-            GitExecuter gitExecuter = new GitExecuter(GitExecuter.GetGitExePath(), SolutionConfig.AbsolutePath);
+            GitExecuter gitExecuter = new GitExecuter(ExeFileHelper.GetGitExePath(), SolutionConfig.AbsolutePath);
 
             bool success = gitExecuter.Execute("status", out string result, out string err);
 

@@ -50,6 +50,7 @@
     <Compile Include="Utils\CmdHelper.cs" />
     <Compile Include="Changer\CsprojFileChanger.cs" />
     <Compile Include="Changer\FileReferenceChanger.cs" />
+    <Compile Include="Utils\ExeFileHelper.cs" />
     <Compile Include="Utils\GitExecuter.cs" />
     <Compile Include="Changer\HintReferenceChanger.cs" />
     <Compile Include="Changer\IReferenceChanger.cs" />
