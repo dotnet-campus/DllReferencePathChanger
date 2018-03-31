@@ -32,6 +32,7 @@ namespace DllRefChanger.Changer
         private bool _hasBackuped = false;
 
         public string Message { get; private set; }
+        public bool UseDefaultCheckCanChange { get; set; } = true;
 
         public void Change()
         {

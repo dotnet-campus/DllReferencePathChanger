@@ -55,10 +55,14 @@ namespace DllRefChanger.Changer
         }
 
         public string Message { get; private set; }
+        public virtual bool UseDefaultCheckCanChange { get; set; } = true;
 
         public void Change()
         {
-            CheckCanChange();
+            if (UseDefaultCheckCanChange)
+            {
+                CheckCanChange();
+            }
 
             BeforeChange();
 
