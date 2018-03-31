@@ -1,14 +1,9 @@
 ﻿using System;
-using System.CodeDom;
-using System.Collections.Generic;
-using System.Data.Odbc;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
+using DllRefChanger.Utils;
 
-namespace DllRefChanger
+namespace DllRefChanger.Changer
 {
     /// <summary>
     /// 更改csproj文件中，Reference.HintPath 的值，以达到修改引用的目的

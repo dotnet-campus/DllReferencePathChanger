@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DllRefChanger
+namespace DllRefChanger.Changer
 {
     /// <summary>
     /// 直接更改Debug目录中的dll文件，
