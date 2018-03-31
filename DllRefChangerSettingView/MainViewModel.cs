@@ -142,10 +142,6 @@ namespace DllRefChangerSettingView
                 if (_advancedMode != value)
                 {
                     _advancedMode = value;
-                    if (_referenceChanger != null)
-                    {
-                        _referenceChanger.UseDefaultCheckCanChange = !value;
-                    }
                     OnPropertyChanged();
                 }
             }
@@ -155,7 +151,7 @@ namespace DllRefChangerSettingView
         public ICommand OpenDllFileCommand => new RelayCommand(OpenDllFile);
 
         public ICommand ReplaceDllCommand =>new RelayCommand(ReplaceDll,CanReplaceDll);
-        public ICommand UndoReplaceCommand => new RelayCommand(UndoReplaceDll,()=>!HasUndo);
+        public ICommand UndoReplaceCommand => new RelayCommand(UndoReplaceDll, () => !HasUndo && !AdvancedMode);
 
         IReferenceChanger _referenceChanger;
 
@@ -213,8 +209,9 @@ namespace DllRefChangerSettingView
                 }
                 else if (IsReplaceCsproj)
                 {
-                    _referenceChanger = new ProjReferneceChanger(SolutionPath, NewFilePath);
+                    _referenceChanger = new ProjReferneceChanger(SolutionPath, NewFilePath);              
                 }
+                _referenceChanger.UseDefaultCheckCanChange = !AdvancedMode;
                 _referenceChanger.Change();
             }
             catch (Exception ex)
