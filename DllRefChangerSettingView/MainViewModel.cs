@@ -75,6 +75,10 @@ namespace DllRefChangerSettingView
             set
             {
                 _isReplaceHintRef = value;
+                if (Path.GetExtension(NewFilePath) != ".dll")
+                {
+                    NewFilePath = string.Empty;
+                }
                 OnPropertyChanged();
             }
         }
@@ -85,6 +89,10 @@ namespace DllRefChangerSettingView
             set
             {
                 _isReplaceFile = value;
+                if (Path.GetExtension(NewFilePath) != ".dll")
+                {
+                    NewFilePath = string.Empty;
+                }
                 OnPropertyChanged();
             }
         }    
@@ -97,6 +105,10 @@ namespace DllRefChangerSettingView
                 if (_isReplaceCsproj != value)
                 {
                     _isReplaceCsproj = value;
+                    if (Path.GetExtension(NewFilePath) != ".csproj")
+                    {
+                        NewFilePath = string.Empty;
+                    }
                     OnPropertyChanged();
                 }
             }
@@ -167,7 +179,7 @@ namespace DllRefChangerSettingView
             string filter = "Dll File(*.dll)|*.dll|Exe File(*.exe)|*.exe|All(*.*)|*.*";
             if (IsReplaceCsproj)
             {
-                filter = "csproj File(*.csproj)|*.csporj|All(*.*)|*.*";
+                filter = "csproj File(*.csproj)|*.csproj|All(*.*)|*.*";
             }
             else if (IsReplaceHintRef)
             {

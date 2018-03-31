@@ -118,20 +118,7 @@ namespace DllRefChangerVSIX
             }
             else
             {
-                string dll = string.Empty;
-                OpenFileDialog ofd = new OpenFileDialog
-                {
-                    Filter = "DLL文件(*.dll)|*.dll|Exe文件(*.exe)|*.exe|All(*.*)|*.*",
-                    DefaultExt = ".dll",
-                    Multiselect = false,
-                    Title = "选择用于替换的DLL文件(解决方案中同名DLL将被替换)"
-                };
-                if (ofd.ShowDialog() == true)
-                {
-                    dll = ofd.FileName;
-                }
-
-                DllRefChangerSettingView.SettingView.ShowSettingWindow(solution.FullName, dll);
+                DllRefChangerSettingView.SettingView.ShowSettingWindow(solution.FullName, string.Empty);
             }
 
 
