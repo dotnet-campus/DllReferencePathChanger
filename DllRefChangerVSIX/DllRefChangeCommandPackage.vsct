@@ -54,9 +54,9 @@
           If you do not want an image next to your command, remove the Icon node /> -->
       <Button guid="guidDllRefChangeCommandPackageCmdSet" id="DllRefChangeCommandId" priority="0x0100" type="Button">
         <Parent guid="guidDllRefChangeCommandPackageCmdSet" id="MyMenuGroup" />
-        <Icon guid="guidImages" id="bmpPic1" />
+        <Icon guid="commandIcon" id="ico" />
         <Strings>
-          <ButtonText>修改解决方案DLL引用</ButtonText>
+          <ButtonText>修改解决方案 dll 引用...</ButtonText>
         </Strings>
       </Button>
     </Buttons>
@@ -69,6 +69,7 @@
             inside a button definition. An important aspect of this declaration is that the element id
             must be the actual index (1-based) of the bitmap inside the bitmap strip. -->
       <Bitmap guid="guidImages" href="Resources\DllRefChangeCommand.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough"/>
+      <Bitmap guid="commandIcon" href="Resources\DllChange.png" usedList="ico"/>
     </Bitmaps>
   </Commands>
 
@@ -90,5 +91,10 @@
       <IDSymbol name="bmpPicArrows" value="5" />
       <IDSymbol name="bmpPicStrikethrough" value="6" />
     </GuidSymbol>
+
+    <GuidSymbol name="commandIcon" value="{8A3EB2A7-830E-4947-98A3-F801941E3592}" >
+      <IDSymbol name="ico" value="1" />
+    </GuidSymbol>
+    
   </Symbols>
 </CommandTable>

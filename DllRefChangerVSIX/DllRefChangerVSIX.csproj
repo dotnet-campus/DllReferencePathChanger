@@ -75,6 +75,7 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="index.html" />
+    <Content Include="Resources\DllChange.png" />
     <Content Include="Resources\DllRefChangeCommand.png" />
     <Content Include="Resources\DllRefChangeCommandPackage.ico" />
     <Content Include="stylesheet.css" />
