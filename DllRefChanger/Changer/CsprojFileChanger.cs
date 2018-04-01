@@ -72,6 +72,8 @@ namespace DllRefChanger.Changer
             DirectoryInfo rootDir = Directory.GetParent(gitExecuter.GitDir);
             Scan(rootDir);
 
+            AfterChange();
+
             void Scan(DirectoryInfo dir)
             {
                 foreach (FileInfo file in dir.GetFiles())
@@ -161,6 +163,11 @@ namespace DllRefChanger.Changer
         protected virtual void BeforeChange()
         {
             // 如果在替换之前需要进行某些操作，在子类中重新该方法以实现该操作
+        }
+
+        protected virtual void AfterChange()
+        {
+            // 如果在替换之后需要进行某些操作，在子类中重新该方法以实现该操作
         }
 
         /// <summary>
