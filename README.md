@@ -5,18 +5,20 @@ Download:
   
 Visual Studio Extensions
 [https://visualstudiogallery.msdn.microsoft.com/](https://visualstudiogallery.msdn.microsoft.com/)  
-  
+
 ## 使用
   
 * [使用指南](http://jgrass.cc/2017-10-auto-dll-reference-change-tool/)   
-  
-加载要替换的DLL文件路径。
 
-点击`替换`可以将当前解决方案中的引用的同名DLL文件替换为选定的DLL文件。
+<br/>
 
-点击`撤销`可撤销替换操作。
+## 1、工程引用替换
+与 HintPath Dll 替换类似，也是对 csproj 文件相关的引用项进行修改，将引用方式由 dll 引用替换为 工程引用，
+不同的是，除了替换 csproj 文件之外，还需要在解决方案 sln 文件中插入对引入工程的引用，这里使用的是 dotnet.exe 工具，来自 .net core sdk，
+如果没有，需要安装才能使用。  
+[.net core sdk 下载链接](https://www.microsoft.com/net/download/windows)  
 
-## 1、HintPath Dll 替换
+## 2、HintPath Dll 替换
 
 HintPath引用替换 是替换csproj中的引用路径，一般用于替换Nuget引用。
 
@@ -34,15 +36,13 @@ HintPath引用替换 是替换csproj中的引用路径，一般用于替换Nuget
 
 另外，解决方案必须使用git进行管理，否则撤销将无法进行。
 
-## 2、 文件替换
+## 3、 文件替换
 
 文件替换 是简单地对Debug目录下的DLL文件进行替换。
 
 撤销操作是利用备份的Debug目录下的DLL文件进行撤销，如果备份文件丢失，将无法撤销。
 
-## 应用场景：
-
-* 通过替换DLL为其它解决方案Debug目录下的DLL，可以在调试时，调整到引用DLL的代码内部调试。
+<br/>
 
 ## 代码使用说明：
   需要为 DllRefChanger 和 DllRefChangerSettingView 两个工程添加签名才能正确编译。  
