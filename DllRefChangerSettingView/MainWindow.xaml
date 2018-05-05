@@ -7,8 +7,8 @@
                        xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                        mc:Ignorable="d"
                        Title="Change DLL Reference Auto" 
-                       Height="400" Width="780" 
-                       MinWidth="400" MinHeight="300"
+                       Height="400" Width="600" 
+                       MinWidth="200" MinHeight="200"
                        WindowStartupLocation="CenterScreen" 
                        ShowIconOnTitleBar="True"
                        ShowMaxRestoreButton="False"
@@ -42,75 +42,69 @@
             <Button Command="{Binding HelpCommand}">HELP</Button>
         </controls:WindowCommands>
     </controls:MetroWindow.RightWindowCommands>
-    <Grid>
+    <StackPanel>
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
 
 
         <!-- 替换方案选择 -->
-        <RadioButton Grid.Row="0" Grid.ColumnSpan="2" Margin="5" FontSize="24" 
-                         IsChecked="{Binding IsReplaceCsproj}">工程引用替换(推荐)</RadioButton>
-        <RadioButton  Grid.Row="1" Grid.Column="0" Margin="5" FontSize="24" 
-                              IsChecked="{Binding IsReplaceHintRef}">HintPath引用替换</RadioButton>
-        <RadioButton Grid.Row="1" Grid.Column="1" Margin="20 5" FontSize="24" 
-                              IsChecked="{Binding IsReplaceFile}">文件替换</RadioButton>
+        <TextBlock Margin="5">
+            Change Assembly Reference.
+        </TextBlock>
+        <TextBlock FontSize="12" Foreground="Gray" Margin="5 0 0 0">
+            Use an assembly project. (csproj file)
+        </TextBlock>
 
         <!-- 解决方案路径 -->
+        <!--
             <TextBlock Grid.Row="2" Grid.Column="0" Margin="5" VerticalAlignment="Bottom">解决方案路径:</TextBlock>
         <Button Grid.Row="2" Grid.Column="1" Margin="5" FontSize="20" 
                 Command="{Binding OpenSlnFileCommand}"
                 Visibility="{Binding IsLoadNormal,Converter={StaticResource BooleanToVisibilityConverter}}">指定sln文件路径</Button>
-
-
+        
         <TextBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" VerticalAlignment="Center" Height="36"
                  controls:TextBoxHelper.ClearTextButton="True" 
                  Text="{Binding SolutionPath,UpdateSourceTrigger=PropertyChanged}"
                  IsEnabled="{Binding IsLoadNormal}"/>
+        -->
 
         <!-- 新文件路径 -->
-        <TextBlock Grid.Row="4" Grid.Column="0" Margin="5" VerticalAlignment="Bottom">csproj/dll文件路径:</TextBlock>
-        <Button Grid.Row="4" Grid.Column="1" Margin="5" FontSize="20"
-                Command="{Binding OpenDllFileCommand}">选择Csproj/DLL文件</Button>
 
-        <TextBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" VerticalAlignment="Center" Height="36"
+        <StackPanel Orientation="Horizontal">
+            <TextBlock  Margin="5,0,5,5" VerticalAlignment="Bottom" Height="25">.csproj file path</TextBlock>
+            <Button  Margin="20 5 5 5" FontSize="16" HorizontalAlignment="Right" HorizontalContentAlignment="Right" 
+                    Command="{Binding OpenDllFileCommand}">Select .csproj file</Button>
+
+        </StackPanel>
+
+
+        <TextBox  Margin="5" VerticalAlignment="Center" Height="26"
                  controls:TextBoxHelper.ClearTextButton="True"
-                 controls:TextBoxHelper.Watermark="新 csproj 或 DLL 所在的完整路径"
+                 controls:TextBoxHelper.Watermark=".csproj file full path"
                  Text="{Binding NewFilePath,UpdateSourceTrigger=PropertyChanged}"></TextBox>
 
         <!-- 操作按钮 -->
-        <Button Grid.Row="6" Grid.Column="0" Margin="5" FontSize="24" Command="{Binding ReplaceDllCommand}">替换</Button>
-        <Button Grid.Row="6" Grid.Column="1" Margin="5" FontSize="24" Command="{Binding UndoReplaceCommand}">撤销</Button>
+        <StackPanel Orientation="Horizontal">
+            <Button  Margin="5" FontSize="24" Command="{Binding ReplaceDllCommand}">Change Reference</Button>
+            <Button Margin="5" FontSize="24" Command="{Binding UndoReplaceCommand}">Undo</Button>
+        </StackPanel>
+
 
         <!-- 消息框 -->
-        <GroupBox Grid.Row="0" Grid.RowSpan="7" Grid.Column="2" Margin="5" Padding="5" Header="消息">
+        <GroupBox  Margin="5" Padding="5"  >
             <ScrollViewer 
-                HorizontalAlignment="Left"  
-                VerticalAlignment="Top"  
-                VerticalScrollBarVisibility="Auto">
+                    HorizontalAlignment="Left"  
+                    VerticalAlignment="Top"  
+                    VerticalScrollBarVisibility="Auto">
                 <ScrollViewer.Content>
-                    <TextBlock TextWrapping="Wrap" FontSize="14" LineHeight="20" Text="{Binding MessageInfo}"></TextBlock>
+                    <TextBlock TextWrapping="Wrap" FontSize="12" Text="{Binding MessageInfo}"></TextBlock>
                 </ScrollViewer.Content>
             </ScrollViewer>
         </GroupBox>
 
         <!-- 高级功能 -->
-        <CheckBox Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="3" Margin="5" IsChecked="{Binding AdvancedMode}">
+        <CheckBox Margin="5" IsChecked="{Binding AdvancedMode}">
             取消替换前对 csproj 文件是否有修改的检查（高级功能，你可能需要自己使用 git 负责 csproj 文件的修改维护）</CheckBox>
-        
-    </Grid>
+
+    </StackPanel>
 </controls:MetroWindow>
 

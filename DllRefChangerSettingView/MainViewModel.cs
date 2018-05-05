@@ -26,15 +26,7 @@ namespace DllRefChangerSettingView
                     NewFilePath = SettingView.DllFileName;
                 }
             }
-            MessageInfo =
-                "csproj引用替换:\n将引用dll的方式转换为工程引用的方式，调试CBB源码将非常方便\n" +
-                "HintPath引用替换:\n替换csproj中的引用路径，一般用于替换Nuget引用\n" +
-                "文件替换:\n简单地对Debug目录下的DLL文件进行替换\n\n" +
-                "特别注意：\n" +
-                "csproj 和 HintPath 引用替换是对 csproj 文件进行修改，" +
-                "撤销操作是使用 git checkout 命令撤销所有对 csproj 和 sln 文件的修改，如果有文件添加和删除等影响 csproj 文件的操作，" +
-                "请谨慎使用自动撤销。\n" +
-                "再啰嗦一句：csproj 引用替换功能需要安装 .net core sdk";
+            MessageInfo = "";
         }
 
         private string _solutionPath;
