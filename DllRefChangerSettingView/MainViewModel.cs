@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 using DllRefChanger;
 using DllRefChanger.Changer;
+using DllRefChanger.Core;
 using Microsoft.Win32;
 
 namespace DllRefChangerSettingView
@@ -205,14 +206,14 @@ namespace DllRefChangerSettingView
                 }
                 else if (IsReplaceFile)
                 {
-                    _referenceChanger = new FileReferenceChanger(SolutionPath, NewFilePath);
+                    //_referenceChanger = new FileReferenceChanger(SolutionPath, NewFilePath);
                 }
                 else if (IsReplaceCsproj)
                 {
                     _referenceChanger = new ProjReferneceChanger(SolutionPath, NewFilePath);              
                 }
                 _referenceChanger.UseDefaultCheckCanChange = !AdvancedMode;
-                _referenceChanger.Change();
+                _referenceChanger.DoChange();
             }
             catch (Exception ex)
             {

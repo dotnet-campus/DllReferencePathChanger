@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using DllRefChanger.CsprojFileOperator;
 using DllRefChanger.Utils;
 
 namespace DllRefChanger.Changer
@@ -25,29 +26,54 @@ namespace DllRefChanger.Changer
         /// </summary>
         public string SourceCsprojFile => SolutionConfig.NewFileAbsolutePath;
 
-        protected override void ChangeToTarget(string csprojFile)
+        protected override void Change(string csprojFile)
         {
             XDocument doc = XDocument.Load(csprojFile);
-            var selectElement = FindReferenceItem(doc);
+
+            XmlNodeFeature feature1 = new XmlNodeFeature("Reference")
+            {
+                SimilarAttributeFeature = new Dictionary<string, string>()
+                {
+                    { "Include", SolutionConfig.DllName.Trim() }
+                }
+            };
+
+            XmlNodeFeature feature2 = new XmlNodeFeature("PackageReference")
+            {
+                SimilarAttributeFeature = new Dictionary<string, string>()
+                {
+                    { "Include", SolutionConfig.DllName.Trim() }
+                }
+            };
+
+            //var selectElement = FindReferenceItem(doc);
+            var selectElement = FineXElement(doc, feature1) ?? FineXElement(doc, feature2);
+
             if (selectElement == null)
             {
                 return;
             }
 
+            // 添加新节点。
+            selectElement.Parent.Add(XmlElementFactory.CreateProjectReferenceNode(SourceCsprojFile, doc.Root.Name.NamespaceName));
+
             // 删除此节点。
             selectElement.Remove();
 
-            // 添加新节点。
-            InsertProject(doc);
-
             doc.Save(csprojFile);
+        }
+
+        protected override void Undo(string csprojFile)
+        {
+            throw new NotImplementedException();
         }
 
         protected override void AfterChange()
         {
             base.AfterChange();
-            InsertSolution();
+            InsertProject();
         }
+
 
         private void InsertProject(XDocument doc)
         {
@@ -80,13 +106,17 @@ namespace DllRefChanger.Changer
             ////projectReferenceItem.AddFirst(new XElement(XName.Get("Project")) { Value = SourceCsprojGuid });	
             ////projectReferenceItem.AddFirst(new XElement(XName.Get("Name")) { Value = SourceCsprojName });	
 
+            //projectReferenceItem
+
+
+
             projectReferenceItemGroup.Add(projectReferenceItem);
         }
 
         /// <summary>
-        /// 使用 dotnet.exe 工具解决方案对替换工程的引用
+        /// 使用 dotnet.exe 工具添加解决方案对替换工程的引用
         /// </summary>
-        private void InsertSolution()
+        private void InsertProject()
         {
             if (!CmdHelper.ExecuteTool(DotNetExe, $"sln {SolutionConfig.AbsolutePath} add {SourceCsprojFile}",
                 out string result, out string errorMsg))
@@ -94,6 +124,19 @@ namespace DllRefChanger.Changer
                 throw new NotSupportedException("fail when add reference to sln use dotnet.exe " + errorMsg);
             }
         }
+
+        /// <summary>
+        /// 使用 dotnet.exe 工具移除解决方案对替换工程的引用
+        /// </summary>
+        private void RemoveProject()
+        {
+            if (!CmdHelper.ExecuteTool(DotNetExe, $"sln {SolutionConfig.AbsolutePath} remove {SourceCsprojFile}",
+                out string result, out string errorMsg))
+            {
+                throw new NotSupportedException("fail when remove reference to sln use dotnet.exe " + errorMsg);
+            }
+        }
+
 
         private string DotNetExe => ExeFileHelper.GetDotNetExePath();
 

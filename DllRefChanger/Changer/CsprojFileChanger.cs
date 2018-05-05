@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using DllRefChanger.Core;
+using DllRefChanger.CsprojFileOperator;
 using DllRefChanger.Utils;
 
 namespace DllRefChanger.Changer
@@ -55,25 +57,17 @@ namespace DllRefChanger.Changer
         }
 
         public string Message { get; private set; }
+
         public virtual bool UseDefaultCheckCanChange { get; set; } = true;
 
-        public void Change()
-        {
-            if (UseDefaultCheckCanChange)
-            {
-                CheckCanChange();
-            }
-
-            BeforeChange();
-
+        private void ScanAllCsprojFileAndDo(Action<string> changeCsprojFileAction)
+        {           
             GitExecuter gitExecuter = new GitExecuter(ExeFileHelper.GetGitExePath(), SolutionConfig.AbsolutePath);
 
             // 有些工程的保存路径不按套路出牌，那就搜索全部git管理目录下的文件夹
             DirectoryInfo rootDir = Directory.GetParent(gitExecuter.GitDir);
             Scan(rootDir);
-
-            AfterChange();
-
+      
             void Scan(DirectoryInfo dir)
             {
                 foreach (FileInfo file in dir.GetFiles())
@@ -82,7 +76,7 @@ namespace DllRefChanger.Changer
                     {
                         try
                         {
-                            ChangeToTarget(file.FullName);
+                            changeCsprojFileAction(file.FullName);
                         }
                         catch (Exception ex)
                         {
@@ -102,11 +96,26 @@ namespace DllRefChanger.Changer
                     Scan(innerDir);
                 }
             }
+        }
 
+        public void DoChange()
+        {
+            //if (UseDefaultCheckCanChange)
+            //{
+            //    CheckCanChange();
+            //}
+
+            BeforeChange();
+            ScanAllCsprojFileAndDo(Change);
+            AfterChange();
         }
 
         public void UndoChange()
         {
+            //BeforeUndo();
+            //ScanAllCsprojFileAndDo(Undo);
+            //AfterUndo();
+
             GitExecuter gitExecuter = new GitExecuter(ExeFileHelper.GetGitExePath(), SolutionConfig.AbsolutePath);
 
             bool success = gitExecuter.Execute("checkout *.csproj", out string result, out string err);
@@ -158,16 +167,28 @@ namespace DllRefChanger.Changer
             }
         }
 
-        protected abstract void ChangeToTarget(string csprojFile);
+        protected abstract void Change(string csprojFile);
+
+        protected abstract void Undo(string csprojFile);
 
         protected virtual void BeforeChange()
         {
-            // 如果在替换之前需要进行某些操作，在子类中重新该方法以实现该操作
+            
         }
 
         protected virtual void AfterChange()
         {
-            // 如果在替换之后需要进行某些操作，在子类中重新该方法以实现该操作
+            
+        }
+
+        protected virtual void BeforeUndo()
+        {
+           
+        }
+
+        protected virtual void AfterUndo()
+        {
+            
         }
 
         /// <summary>
@@ -230,6 +251,24 @@ namespace DllRefChanger.Changer
             return selectElement;
         }
 
+
+        protected XElement FineXElement(XDocument doc, XmlNodeFeature feature)
+        {
+            List<XElement> itemGroups = doc.Root?.Elements().Where(e => e.Name.LocalName == "ItemGroup").ToList();
+            if (itemGroups == null)
+            {
+                return null;
+            }
+
+            List<XElement> refrenceElements = new List<XElement>();
+            foreach (XElement itemGroup in itemGroups)
+            {
+                refrenceElements.AddRange(itemGroup.Elements());
+            }
+
+            return refrenceElements.FirstOrDefault(feature.Match);
+
+        }
 
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace DllRefChanger.Changer
+﻿namespace DllRefChanger.Core
 {
     public interface IReferenceChanger
     {
@@ -6,7 +6,7 @@
 
         bool UseDefaultCheckCanChange { get; set; }
 
-        void Change();
+        void DoChange();
 
         void UndoChange();
     }

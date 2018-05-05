@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using DllRefChanger.CsprojFileOperator;
 using DllRefChanger.Utils;
 
 namespace DllRefChanger.Changer
@@ -30,43 +32,49 @@ namespace DllRefChanger.Changer
 
         }
 
-        protected override void ChangeToTarget(string csprojFile)
+        protected override void Change(string csprojFile)
         {
             XDocument doc = XDocument.Load(csprojFile);
 
-            var selectElement = FindReferenceItem(doc);
-            if (selectElement == null)
+            XmlNodeFeature feature1 = new XmlNodeFeature("Reference")
             {
+                SimilarAttributeFeature = new Dictionary<string, string>()
+                {
+                    { "Include", SolutionConfig.DllName.Trim() }
+                }
+            };
+
+            XmlNodeFeature feature2 = new XmlNodeFeature("PackageReference")
+            {
+                SimilarAttributeFeature = new Dictionary<string, string>()
+                {
+                    { "Include", SolutionConfig.DllName.Trim() }
+                }
+            };
+
+            var selectElement = FineXElement(doc, feature1);
+            if (selectElement != null)
+            {
+                XmlElementFactory.ChangeReferenceNode(ref selectElement, SolutionConfig.NewFileAbsolutePath);
+                doc.Save(csprojFile);
                 return;
             }
 
-            XElement specificVersion = selectElement.Elements().FirstOrDefault(e => e.Name.LocalName == "SpecificVersion");
-            XElement hintPath = selectElement.Elements().FirstOrDefault(e => e.Name.LocalName == "HintPath");
-
-            if (hintPath == null)
+            selectElement = FineXElement(doc, feature2);
+            if (selectElement != null)
             {
-                throw new ArgumentNullException(nameof(hintPath), "没有引用值/No HintPath value");
+                var element = XmlElementFactory.CreateReferenceNode(SolutionConfig.DllName.Trim(), SolutionConfig.NewFileAbsolutePath, doc.Root.Name.NamespaceName);
+                selectElement.Parent.Add(element);
+                selectElement.Remove();
+                doc.Save(csprojFile);
+                return;
             }
-
-            if (specificVersion == null)
-            {
-                XName xn = XName.Get("SpecificVersion", hintPath.Name.NamespaceName);
-                XElement sc = new XElement(xn)
-                {
-                    Value = "False",
-                };
-                selectElement.AddFirst(sc);
-            }
-            else
-            {
-                specificVersion.Value = "False";
-            }
-
-            hintPath.Value = PathHelper.GetRelativePath(csprojFile, SolutionConfig.NewFileAbsolutePath);
-
-            doc.Save(csprojFile);
 
         }
 
+        protected override void Undo(string csprojFile)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
