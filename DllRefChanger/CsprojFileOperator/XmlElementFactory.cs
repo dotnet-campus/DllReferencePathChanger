@@ -10,15 +10,12 @@ namespace DllRefChanger.CsprojFileOperator
 {
     static class XmlElementFactory
     {
-        //public const string TagNodeName = "HasBeenChanged";
-
         public static XElement CreateProjectReferenceNode(string projFilePath, string projGuid, string projName, string namespaceName)
         {
             XElement xElement = new XElement(XName.Get("ProjectReference", namespaceName));
             xElement.SetAttributeValue(XName.Get("Include"), projFilePath);
             xElement.SetElementValue(XName.Get("Project", namespaceName), projGuid);
             xElement.SetElementValue(XName.Get("Name", namespaceName), projName);
-            //xElement.SetElementValue(XName.Get(TagNodeName), "true");
             return xElement;
         }
 
@@ -26,7 +23,6 @@ namespace DllRefChanger.CsprojFileOperator
         {
             XElement xElement = new XElement(XName.Get("ProjectReference", namespaceName));
             xElement.SetAttributeValue(XName.Get("Include"), projFilePath);
-            //xElement.SetElementValue(XName.Get(TagNodeName), "true");
             return xElement;
         }
 
@@ -34,7 +30,6 @@ namespace DllRefChanger.CsprojFileOperator
         {
             refrenceNode.SetElementValue(XName.Get("SpecificVersion", refrenceNode.Name.NamespaceName), "False");
             refrenceNode.SetElementValue(XName.Get("HintPath", refrenceNode.Name.NamespaceName), dllFilePath);
-            //refrenceNode.SetElementValue(XName.Get(TagNodeName), "true");
             return refrenceNode;
         }
 
@@ -43,7 +38,6 @@ namespace DllRefChanger.CsprojFileOperator
             XElement xElement = new XElement(XName.Get("Reference", namespaceName));
             xElement.SetAttributeValue("Include", name);
             xElement.SetElementValue(XName.Get("HintPath", namespaceName), dllFilePath);
-            //xElement.SetElementValue(XName.Get(TagNodeName), "true");
             return xElement;
         }
 

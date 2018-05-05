@@ -191,67 +191,6 @@ namespace DllRefChanger.Changer
             
         }
 
-        /// <summary>
-        /// 找到 csprojFile 文件中包含待替换dll信息的 Reference 节点；没有找到则返回 null .
-        /// </summary>
-        /// <returns></returns>
-        protected XElement FindReferenceItem(XDocument doc)
-        {
-            List<XElement> itemGroups = doc.Root?.Elements().Where(e => e.Name.LocalName == "ItemGroup").ToList();
-
-            // 找到包含 Reference 节点的 ItemGroup 
-            itemGroups = itemGroups?.Where(e => e.Elements().Any(ele => ele.Name.LocalName == "Reference")).ToList();
-
-            if (itemGroups == null)
-            {
-                return null;
-            }
-
-            XElement selectElement = null;
-            foreach (XElement itemGroup in itemGroups)
-            {
-                selectElement = itemGroup?.Elements().FirstOrDefault(e =>
-                {
-
-                    /*value : 
-                     "System.Composition.AttributedModel, Version=1.0.31.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"
-                     */
-
-                    string value = e.Attribute("Include")?.Value;
-                    if (string.IsNullOrEmpty(value))
-                    {
-                        return false;
-                    }
-
-                    string dllName = value.Split(',').FirstOrDefault();
-                    return dllName?.Trim() == SolutionConfig.DllName.Trim();
-
-                });
-                if (selectElement != null)
-                {
-                    break;
-                }
-            }
-
-            if (selectElement == null)
-            {
-                return null;
-            }
-
-
-            if (!string.IsNullOrEmpty(SolutionConfig.SourceDllVersion))
-            {
-                // 指定了版本号，如果版本不匹配，返回
-                if (!selectElement.Attribute("Include")?.Value.Contains(SolutionConfig.SourceDllVersion) ?? true)
-                {
-                    return null;
-                }
-            }
-
-            return selectElement;
-        }
-
-
         protected XElement FineXElement(XDocument doc, XmlNodeFeature feature)
         {
             List<XElement> itemGroups = doc.Root?.Elements().Where(e => e.Name.LocalName == "ItemGroup").ToList();

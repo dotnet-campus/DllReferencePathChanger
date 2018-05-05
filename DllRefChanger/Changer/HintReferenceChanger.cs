@@ -63,6 +63,7 @@ namespace DllRefChanger.Changer
             selectElement = FineXElement(doc, feature2);
             if (selectElement != null)
             {
+                // 此方法创建出来的节点，没有 版本号 等其它信息，实际使用中会出问题。
                 var element = XmlElementFactory.CreateReferenceNode(SolutionConfig.DllName.Trim(), SolutionConfig.NewFileAbsolutePath, doc.Root.Name.NamespaceName);
                 selectElement.Parent.Add(element);
                 selectElement.Remove();

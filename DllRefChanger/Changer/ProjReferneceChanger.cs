@@ -74,45 +74,6 @@ namespace DllRefChanger.Changer
             InsertProject();
         }
 
-
-        private void InsertProject(XDocument doc)
-        {
-            // 这里是新建的实例，对其增删改无效，只能用于查询。
-            // ReSharper disable once PossibleNullReferenceException
-            List<XElement> itemGroups = doc.Root.Elements().Where(e => e.Name.LocalName == "ItemGroup").ToList();
-
-            // 找到或创建包含 ProjectReference 节点的 ItemGroup。
-            var projectReferenceItemGroup = itemGroups.FirstOrDefault(e => e.Elements().Any(ele => ele.Name.LocalName == "ProjectReference"));
-            if (projectReferenceItemGroup == null)
-            {
-                projectReferenceItemGroup = new XElement(XName.Get("ItemGroup", doc.Root.Name.NamespaceName));
-                doc.Root.Add(projectReferenceItemGroup);
-            }
-
-            /*	
-             <ProjectReference Include="..\..\..\Dependencies\Cvte.Paint\Cvte.Paint.Chart\Cvte.Paint.Chart.csproj">	
-                 <Project>{3e1f8f4b-5f57-4f8f-9224-9ea9b987b880}</Project>	
-                 <Name>Cvte.Paint.Chart</Name>	
-             </ProjectReference>	
-             */
-
-            string ns = projectReferenceItemGroup.Name.NamespaceName;
-            // 添加新的 ProjectReference 节点 	
-            XElement projectReferenceItem = new XElement(XName.Get("ProjectReference", ns));
-            var includeValue = SourceCsprojFile; // 使用绝对路径（相对路径也可以）
-            projectReferenceItem.SetAttributeValue(XName.Get("Include"), includeValue);
-
-            // 这两个内容的添加没有必要
-            ////projectReferenceItem.AddFirst(new XElement(XName.Get("Project")) { Value = SourceCsprojGuid });	
-            ////projectReferenceItem.AddFirst(new XElement(XName.Get("Name")) { Value = SourceCsprojName });	
-
-            //projectReferenceItem
-
-
-
-            projectReferenceItemGroup.Add(projectReferenceItem);
-        }
-
         /// <summary>
         /// 使用 dotnet.exe 工具添加解决方案对替换工程的引用
         /// </summary>
