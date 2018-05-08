@@ -6,7 +6,7 @@
                        xmlns:local="clr-namespace:DllRefChangerSettingView"
                        xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                        mc:Ignorable="d"
-                       Title="Change DLL Reference Auto" 
+                       Title="Repalce Dll Reference Tool" 
                        Height="400" Width="600" 
                        MinWidth="200" MinHeight="200"
                        WindowStartupLocation="CenterScreen" 
@@ -42,13 +42,20 @@
             <Button Command="{Binding HelpCommand}">HELP</Button>
         </controls:WindowCommands>
     </controls:MetroWindow.RightWindowCommands>
-    <StackPanel>
+    <Grid>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        
+        <StackPanel Grid.Row="0">
 
 
 
         <!-- 替换方案选择 -->
         <TextBlock Margin="5">
-            Change Assembly Reference.
+            Replace Assembly Reference.
         </TextBlock>
         <TextBlock FontSize="12" Foreground="Gray" Margin="5 0 0 0">
             Use an assembly project. (csproj file)
@@ -69,12 +76,16 @@
 
         <!-- 新文件路径 -->
 
-        <StackPanel Orientation="Horizontal">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
             <TextBlock  Margin="5,0,5,5" VerticalAlignment="Bottom" Height="25">.csproj file path</TextBlock>
-            <Button  Margin="20 5 5 5" FontSize="16" HorizontalAlignment="Right" HorizontalContentAlignment="Right" 
+            <Button Grid.Column="1" Margin="20 5 5 5" FontSize="16" HorizontalAlignment="Right" HorizontalContentAlignment="Right" 
                     Command="{Binding OpenDllFileCommand}">Select .csproj file</Button>
 
-        </StackPanel>
+        </Grid>
 
 
         <TextBox  Margin="5" VerticalAlignment="Center" Height="26"
@@ -83,28 +94,43 @@
                  Text="{Binding NewFilePath,UpdateSourceTrigger=PropertyChanged}"></TextBox>
 
         <!-- 操作按钮 -->
-        <StackPanel Orientation="Horizontal">
-            <Button  Margin="5" FontSize="24" Command="{Binding ReplaceDllCommand}">Change Reference</Button>
-            <Button Margin="5" FontSize="24" Command="{Binding UndoReplaceCommand}">Undo</Button>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Button  Margin="5" FontSize="24" Command="{Binding ReplaceDllCommand}">Replace Reference</Button>
+            <Button Grid.Column="1" Margin="5" FontSize="24" Command="{Binding UndoReplaceCommand}">Undo</Button>
+        </Grid>
+
         </StackPanel>
 
+        <Grid  Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
 
-        <!-- 消息框 -->
-        <GroupBox  Margin="5" Padding="5"  >
-            <ScrollViewer 
+            <!-- 消息框 -->
+            <GroupBox  Margin="5" Padding="5" Header="Message">
+                <ScrollViewer 
                     HorizontalAlignment="Left"  
                     VerticalAlignment="Top"  
                     VerticalScrollBarVisibility="Auto">
-                <ScrollViewer.Content>
-                    <TextBlock TextWrapping="Wrap" FontSize="12" Text="{Binding MessageInfo}"></TextBlock>
-                </ScrollViewer.Content>
-            </ScrollViewer>
-        </GroupBox>
+                    <ScrollViewer.Content>
+                        <TextBox TextWrapping="Wrap" IsReadOnly="True" FontSize="12" Text="{Binding MessageInfo}"></TextBox>
+                    </ScrollViewer.Content>
+                </ScrollViewer>
+            </GroupBox>
 
-        <!-- 高级功能 -->
-        <CheckBox Margin="5" IsChecked="{Binding AdvancedMode}">
-            取消替换前对 csproj 文件是否有修改的检查（高级功能，你可能需要自己使用 git 负责 csproj 文件的修改维护）</CheckBox>
+            <!-- 高级功能 -->
+            <CheckBox Grid.Row="1" Margin="5" IsChecked="{Binding AdvancedMode}">
+                取消替换前对 csproj 文件是否有修改的检查（高级功能，你可能需要自己使用 git 负责 csproj 文件的修改维护）</CheckBox>
 
-    </StackPanel>
+        </Grid>
+
+
+    </Grid>
 </controls:MetroWindow>
 

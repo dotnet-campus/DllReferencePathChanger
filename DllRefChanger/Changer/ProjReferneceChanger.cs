@@ -68,6 +68,14 @@ namespace DllRefChanger.Changer
             throw new NotImplementedException();
         }
 
+        protected override void BeforeChange()
+        {
+            if(!File.Exists(DotNetExe))
+            {
+               throw new NotSupportedException("Please install dotnet core sdk first. \n url: https://www.microsoft.com/net/download/windows");
+            }
+        }
+
         protected override void AfterChange()
         {
             base.AfterChange();
