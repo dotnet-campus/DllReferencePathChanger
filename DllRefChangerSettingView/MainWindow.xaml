@@ -119,15 +119,18 @@
                     VerticalAlignment="Top"  
                     VerticalScrollBarVisibility="Auto">
                     <ScrollViewer.Content>
-                        <TextBox TextWrapping="Wrap" IsReadOnly="True" FontSize="12" Text="{Binding MessageInfo}"></TextBox>
+                        <TextBox BorderThickness="0" TextWrapping="Wrap" IsReadOnly="True" FontSize="12" Text="{Binding MessageInfo}"/>
                     </ScrollViewer.Content>
                 </ScrollViewer>
             </GroupBox>
 
             <!-- 高级功能 -->
-            <CheckBox Grid.Row="1" Margin="5" IsChecked="{Binding AdvancedMode}">
-                取消替换前对 csproj 文件是否有修改的检查（高级功能，你可能需要自己使用 git 负责 csproj 文件的修改维护）</CheckBox>
-
+            <StackPanel Grid.Row="1">
+                <CheckBox Margin="5" IsChecked="{Binding AdvancedMode}">Use git checkout command when Undo</CheckBox>
+                <TextBlock Margin="5 2 5 2" FontSize="10">Attension: If use git command to undo, good is : every thing back to original status</TextBlock>
+                <TextBlock Margin="5 2 5 2" FontSize="10">Bad is : you should pay attension to the changing of csproj file (such as add or remove file in project).</TextBlock>
+            </StackPanel>
+            
         </Grid>
 
 

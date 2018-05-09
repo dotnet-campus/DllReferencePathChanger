@@ -204,7 +204,7 @@ namespace DllRefChangerSettingView
                 {
                     _referenceChanger = new ProjReferneceChanger(SolutionPath, NewFilePath);              
                 }
-                _referenceChanger.UseDefaultCheckCanChange = !AdvancedMode;
+                _referenceChanger.IsUseGitWhenUndo = AdvancedMode;
                 _referenceChanger.DoChange();
             }
             catch (Exception ex)

@@ -58,7 +58,7 @@ namespace DllRefChanger.Changer
 
         public string Message { get; private set; }
 
-        public virtual bool UseDefaultCheckCanChange { get; set; } = true;
+        public virtual bool IsUseGitWhenUndo { get; set; } = false;
 
         private void ScanAllCsprojFileAndDo(Action<string> changeCsprojFileAction)
         {           
@@ -100,10 +100,10 @@ namespace DllRefChanger.Changer
 
         public void DoChange()
         {
-            //if (UseDefaultCheckCanChange)
-            //{
-            //    CheckCanChange();
-            //}
+            if (IsUseGitWhenUndo)
+            {
+                CheckCanChange();
+            }
 
             BeforeChange();
             ScanAllCsprojFileAndDo(Change);
@@ -113,24 +113,38 @@ namespace DllRefChanger.Changer
         public void UndoChange()
         {
             BeforeUndo();
-            ScanAllCsprojFileAndDo(Undo);
+            if (IsUseGitWhenUndo)
+            {
+                UndoByReplaceElement();
+            }
+            else
+            {
+                UndoByGitCheckout();
+            }
             AfterUndo();
+        }
 
-            //GitExecuter gitExecuter = new GitExecuter(ExeFileHelper.GetGitExePath(), SolutionConfig.AbsolutePath);
+        private void UndoByReplaceElement()
+        {
+            ScanAllCsprojFileAndDo(Undo);
+        }
 
-            //bool success = gitExecuter.Execute("checkout *.csproj", out string result, out string err);
+        private void UndoByGitCheckout()
+        {
+            GitExecuter gitExecuter = new GitExecuter(ExeFileHelper.GetGitExePath(), SolutionConfig.AbsolutePath);
 
-            //if (!success)
-            //{
-            //    throw new InvalidOperationException($"哎呀，恢复 csproj 文件时出错了：{err}");
-            //}
+            bool success = gitExecuter.Execute("checkout *.csproj", out string result, out string err);
 
-            //success = gitExecuter.Execute("checkout *.sln", out string result2, out string err2);
-            //if (!success)
-            //{
-            //    throw new InvalidOperationException($"哎呀，恢复 sln 文件时出错了：{err2}");
-            //}
+            if (!success)
+            {
+                throw new InvalidOperationException($"哎呀，恢复 csproj 文件时出错了：{err}");
+            }
 
+            success = gitExecuter.Execute("checkout *.sln", out string result2, out string err2);
+            if (!success)
+            {
+                throw new InvalidOperationException($"哎呀，恢复 sln 文件时出错了：{err2}");
+            }
         }
 
         private void CheckFile()

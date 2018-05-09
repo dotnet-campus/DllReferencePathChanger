@@ -4,7 +4,7 @@
     {
         string Message { get; }
 
-        bool UseDefaultCheckCanChange { get; set; }
+        bool IsUseGitWhenUndo { get; set; }
 
         void DoChange();
 

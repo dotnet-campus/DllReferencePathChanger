@@ -122,7 +122,10 @@ namespace DllRefChanger.Changer
         protected override void AfterUndo()
         {
             base.AfterUndo();
-            RemoveProject();
+            if (!IsUseGitWhenUndo)
+            {
+                RemoveProject();
+            }
         }
 
         /// <summary>
