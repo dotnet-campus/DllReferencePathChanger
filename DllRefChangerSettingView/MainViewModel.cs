@@ -35,7 +35,7 @@ namespace DllRefChangerSettingView
         private bool _isReplaceFile;
         private bool _isReplaceCsproj = true;
         private string _messageInfo;
-        private bool _hasUndo = true;
+        private bool _canUndo = true;
         private bool _advancedMode;
 
         public string SolutionPath
@@ -117,12 +117,12 @@ namespace DllRefChangerSettingView
             }
         }
 
-        public bool HasUndo
+        public bool CanUndo
         {
-            get => _hasUndo;
+            get => _canUndo;
             set
             {
-                _hasUndo = value;
+                _canUndo = value;
                 OnPropertyChanged();
             }
         }
@@ -144,7 +144,7 @@ namespace DllRefChangerSettingView
         public ICommand OpenDllFileCommand => new RelayCommand(OpenDllFile);
 
         public ICommand ReplaceDllCommand =>new RelayCommand(ReplaceDll,CanReplaceDll);
-        public ICommand UndoReplaceCommand => new RelayCommand(UndoReplaceDll, () => !HasUndo && !AdvancedMode);
+        public ICommand UndoReplaceCommand => new RelayCommand(UndoReplaceDll, () => CanUndo);
 
         IReferenceChanger _referenceChanger;
 
@@ -213,7 +213,7 @@ namespace DllRefChangerSettingView
                 MessageBox.Show(MessageInfo, "替换发生错误", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            HasUndo = false;
+            CanUndo = true;
             MessageInfo = "替换完成\n" + _referenceChanger.Message;
         }
 
@@ -234,7 +234,7 @@ namespace DllRefChangerSettingView
                 MessageBox.Show(MessageInfo, "撤销替换发生错误", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            HasUndo = true;
+            CanUndo = false;
             MessageInfo = "撤销成功";
         }
 

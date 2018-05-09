@@ -34,7 +34,7 @@ namespace DllRefChangerSettingView
             MainViewModel mainViewModel = this.DataContext as MainViewModel;
             if (mainViewModel != null)
             {
-                if (!mainViewModel.HasUndo)
+                if (!mainViewModel.CanUndo)
                 {
                     if (MessageBoxResult.Cancel ==
                         MessageBox.Show(

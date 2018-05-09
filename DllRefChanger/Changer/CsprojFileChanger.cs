@@ -115,11 +115,11 @@ namespace DllRefChanger.Changer
             BeforeUndo();
             if (IsUseGitWhenUndo)
             {
-                UndoByReplaceElement();
+                UndoByGitCheckout();          
             }
             else
             {
-                UndoByGitCheckout();
+                UndoByReplaceElement();
             }
             AfterUndo();
         }
