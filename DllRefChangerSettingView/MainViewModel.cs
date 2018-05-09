@@ -135,6 +135,10 @@ namespace DllRefChangerSettingView
                 if (_advancedMode != value)
                 {
                     _advancedMode = value;
+                    if (_referenceChanger != null)
+                    {
+                        _referenceChanger.IsUseGitWhenUndo = value;
+                    }
                     OnPropertyChanged();
                 }
             }

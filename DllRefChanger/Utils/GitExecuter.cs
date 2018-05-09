@@ -39,7 +39,7 @@ namespace DllRefChanger.Utils
                     {
                         if (file.Name == ".git")
                         {
-                            GitDir = File.ReadAllText(file.FullName).ToLower().Replace("gitdir", "").Trim();
+                            GitDir = file.FullName;
                             WorkTree = file.DirectoryName;
                             return;
                         }
