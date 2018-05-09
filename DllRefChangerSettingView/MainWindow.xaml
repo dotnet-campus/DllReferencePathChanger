@@ -29,6 +29,7 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+            <local:ReserveBooleanConverter x:Key="ReserveBooleanConverter"/>
         </ResourceDictionary>
 
     </controls:MetroWindow.Resources>
@@ -126,7 +127,7 @@
 
             <!-- 高级功能 -->
             <StackPanel Grid.Row="1">
-                <CheckBox Margin="5" IsChecked="{Binding AdvancedMode}">Use git checkout command when Undo</CheckBox>
+                <CheckBox Margin="5" IsChecked="{Binding AdvancedMode}" IsEnabled="{Binding CanUndo,Converter={StaticResource ReserveBooleanConverter}}" >Use git checkout command when Undo</CheckBox>
                 <TextBlock Margin="5 2 5 2" FontSize="10">Attension: If use git command to undo, good is : every thing back to original status</TextBlock>
                 <TextBlock Margin="5 2 5 2" FontSize="10">Bad is : you should pay attension to the changing of csproj file (such as add or remove file in project).</TextBlock>
             </StackPanel>

@@ -35,9 +35,9 @@ namespace DllRefChangerSettingView
         private bool _isReplaceFile;
         private bool _isReplaceCsproj = true;
         private string _messageInfo;
-        private bool _canUndo = true;
+        private bool _canUndo = false;
         private bool _advancedMode;
-
+        
         public string SolutionPath
         {
             get => _solutionPath;
