@@ -133,7 +133,7 @@ namespace DllRefChanger.Changer
         /// </summary>
         private void InsertProject()
         {
-            if (!CmdHelper.ExecuteTool(DotNetExe, $"sln {SolutionConfig.AbsolutePath} add {SourceCsprojFile}",
+            if (!CmdHelper.ExecuteTool(DotNetExe, $"sln \"{SolutionConfig.AbsolutePath}\" add \"{SourceCsprojFile}\"",
                 out string result, out string errorMsg))
             {
                 throw new NotSupportedException("fail when add reference to sln use dotnet.exe " + errorMsg);
@@ -145,7 +145,7 @@ namespace DllRefChanger.Changer
         /// </summary>
         private void RemoveProject()
         {
-            if (!CmdHelper.ExecuteTool(DotNetExe, $"sln {SolutionConfig.AbsolutePath} remove {SourceCsprojFile}",
+            if (!CmdHelper.ExecuteTool(DotNetExe, $"sln \"{SolutionConfig.AbsolutePath}\" remove \"{SourceCsprojFile}\"",
                 out string result, out string errorMsg))
             {
                 throw new NotSupportedException("fail when remove reference to sln use dotnet.exe " + errorMsg);
