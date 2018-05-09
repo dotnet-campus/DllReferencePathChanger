@@ -26,6 +26,26 @@ namespace DllRefChanger.CsprojFileOperator
             return xElement;
         }
 
+        public static XElement CreateItemGroupForReplaceReference(string projFilePath, string projGuid, string projName, string namespaceName)
+        {
+            XElement xElement = new XElement(XName.Get("ItemGroup",namespaceName));
+
+            XElement removeReference = new XElement(XName.Get("Reference",namespaceName));
+            removeReference.SetAttributeValue(XName.Get("Remove"), projName);
+
+            XElement removePackageReference = new XElement(XName.Get("PackageReference", namespaceName));
+            removePackageReference.SetAttributeValue(XName.Get("Remove"), projName);
+
+            XElement insertProjcetReference =
+                CreateProjectReferenceNode(projFilePath, projGuid, projName, namespaceName);
+
+            xElement.Add(removeReference);
+            xElement.Add(removePackageReference);
+            xElement.Add(insertProjcetReference);
+
+            return xElement;
+        }
+
         public static XElement ChangeReferenceNode(ref XElement refrenceNode, string dllFilePath)
         {
             refrenceNode.SetElementValue(XName.Get("SpecificVersion", refrenceNode.Name.NamespaceName), "False");
