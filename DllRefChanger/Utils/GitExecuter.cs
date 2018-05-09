@@ -35,6 +35,15 @@ namespace DllRefChanger.Utils
                             return;
                         }
                     }
+                    foreach (FileInfo file in dir.GetFiles())
+                    {
+                        if (file.Name == ".git")
+                        {
+                            GitDir = File.ReadAllText(file.FullName).ToLower().Replace("gitdir", "").Trim();
+                            WorkTree = file.DirectoryName;
+                            return;
+                        }
+                    }
                     if (dir.Parent == null)
                     {
                         throw new InvalidOperationException($"无法在{projectPath}目录及其父目录中找到git仓库");
