@@ -104,8 +104,8 @@ namespace DllRefChangerVSIX
             var solution = DTE.Solution;
             if (!solution.IsOpen)
             {
-                string message = "你还没有打开一个解决方案哟/None any solution here.";
-                string title = "空的解决方案/Empty Solution";
+                string message = "Not exsit any solution here.";
+                string title = "Empty Solution";
 
                 VsShellUtilities.ShowMessageBox(
                     this.ServiceProvider,

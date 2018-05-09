@@ -51,7 +51,7 @@ namespace DllRefChanger.Changer
         {
             if (!File.Exists(path))
             {
-                throw new FileNotFoundException("你逗我！这个文件不存在。", path);
+                throw new FileNotFoundException("File Not Exist.", path);
             }
             SolutionConfig.NewFileAbsolutePath = path;
         }

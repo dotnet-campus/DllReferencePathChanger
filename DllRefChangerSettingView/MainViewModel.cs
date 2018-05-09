@@ -156,7 +156,7 @@ namespace DllRefChangerSettingView
         {
             OpenFileDialog ofd = new OpenFileDialog
             {
-                Filter = "解决方案文件(*.sln)|*.sln" ,
+                Filter = "Solution File(*.sln)|*.sln" ,
                 DefaultExt = ".sln",
                 Multiselect = false,
             };
@@ -214,11 +214,11 @@ namespace DllRefChangerSettingView
             catch (Exception ex)
             {
                 MessageInfo = ex.Message;
-                MessageBox.Show(MessageInfo, "替换发生错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(MessageInfo, "Replace Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             CanUndo = true;
-            MessageInfo = "替换完成\n" + _referenceChanger.Message;
+            MessageInfo = "Replace Success\n" + _referenceChanger.Message;
         }
 
         private bool CanReplaceDll()
@@ -235,11 +235,11 @@ namespace DllRefChangerSettingView
             catch (Exception ex)
             {
                 MessageInfo = ex.Message;
-                MessageBox.Show(MessageInfo, "撤销替换发生错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(MessageInfo, "Undo Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             CanUndo = false;
-            MessageInfo = "撤销成功";
+            MessageInfo = "Undo Success";
         }
 
         public ICommand HelpCommand=>new RelayCommand(() =>
