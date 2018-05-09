@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="CsprojFileOperator\XmlElementFactory.cs" />
     <Compile Include="CsprojFileOperator\XmlNodeFeature.cs" />
+    <Compile Include="Model\RefrenceItem.cs" />
     <Compile Include="Utils\CmdHelper.cs" />
     <Compile Include="Changer\CsprojFileChanger.cs" />
     <Compile Include="Utils\ExeFileHelper.cs" />
@@ -63,8 +64,6 @@
   <ItemGroup>
     <None Include="DllRefChanger.pfx" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Model\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

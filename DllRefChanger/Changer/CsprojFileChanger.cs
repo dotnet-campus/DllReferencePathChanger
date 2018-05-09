@@ -112,24 +112,24 @@ namespace DllRefChanger.Changer
 
         public void UndoChange()
         {
-            //BeforeUndo();
-            //ScanAllCsprojFileAndDo(Undo);
-            //AfterUndo();
+            BeforeUndo();
+            ScanAllCsprojFileAndDo(Undo);
+            AfterUndo();
 
-            GitExecuter gitExecuter = new GitExecuter(ExeFileHelper.GetGitExePath(), SolutionConfig.AbsolutePath);
+            //GitExecuter gitExecuter = new GitExecuter(ExeFileHelper.GetGitExePath(), SolutionConfig.AbsolutePath);
 
-            bool success = gitExecuter.Execute("checkout *.csproj", out string result, out string err);
+            //bool success = gitExecuter.Execute("checkout *.csproj", out string result, out string err);
 
-            if (!success)
-            {
-                throw new InvalidOperationException($"哎呀，恢复 csproj 文件时出错了：{err}");
-            }
+            //if (!success)
+            //{
+            //    throw new InvalidOperationException($"哎呀，恢复 csproj 文件时出错了：{err}");
+            //}
 
-            success = gitExecuter.Execute("checkout *.sln", out string result2, out string err2);
-            if (!success)
-            {
-                throw new InvalidOperationException($"哎呀，恢复 sln 文件时出错了：{err2}");
-            }
+            //success = gitExecuter.Execute("checkout *.sln", out string result2, out string err2);
+            //if (!success)
+            //{
+            //    throw new InvalidOperationException($"哎呀，恢复 sln 文件时出错了：{err2}");
+            //}
 
         }
 
