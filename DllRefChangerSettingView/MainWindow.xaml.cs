@@ -34,12 +34,12 @@ namespace DllRefChangerSettingView
             MainViewModel mainViewModel = this.DataContext as MainViewModel;
             if (mainViewModel != null)
             {
-                if (!mainViewModel.CanUndo)
+                if (mainViewModel.CanUndo)
                 {
                     if (MessageBoxResult.Cancel ==
                         MessageBox.Show(
-                            "尚未对更改做出撤销操作，是否退出?", 
-                            "确定退出", 
+                            "Not Undo, Sure To Close?", 
+                            "Confirm", 
                             MessageBoxButton.OKCancel, 
                             MessageBoxImage.Warning))
                     {
