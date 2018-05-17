@@ -59,10 +59,17 @@ namespace DllRefChanger.Changer
             }
 
             // 添加新节点。
-            //XElement newElement = XmlElementFactory.CreateProjectReferenceNode(SourceCsprojFile, doc.Root.Name.NamespaceName);
-            XElement newElement =
-                XmlElementFactory.CreateProjectReferenceNode(SourceCsprojFile, SourceCsprojGuid, SourceCsprojName,
-                    doc.Root.Name.NamespaceName);
+            XElement newElement;
+            if (string.IsNullOrWhiteSpace(SourceCsprojGuid) || string.IsNullOrWhiteSpace(SourceCsprojName))
+            {
+                newElement = XmlElementFactory.CreateProjectReferenceNode(SourceCsprojFile, doc.Root.Name.NamespaceName);
+            }
+            else
+            {
+                newElement = XmlElementFactory.CreateProjectReferenceNode(SourceCsprojFile, SourceCsprojGuid, SourceCsprojName,
+                        doc.Root.Name.NamespaceName);
+            }
+
             selectElement.Parent.Add(newElement);
 
             // 删除此节点。
@@ -183,10 +190,10 @@ namespace DllRefChanger.Changer
                 break;
             }
 
-            if (string.IsNullOrWhiteSpace(SourceCsprojGuid) || string.IsNullOrWhiteSpace(SourceCsprojName))
-            {
-                throw new InvalidOperationException($"Can not get ProjectGuid or AssemblyName of {csprojFile}");
-            }
+            //if (string.IsNullOrWhiteSpace(SourceCsprojGuid) || string.IsNullOrWhiteSpace(SourceCsprojName))
+            //{
+            //    throw new InvalidOperationException($"Can not get ProjectGuid or AssemblyName of {csprojFile}");
+            //}
 
         }
 
