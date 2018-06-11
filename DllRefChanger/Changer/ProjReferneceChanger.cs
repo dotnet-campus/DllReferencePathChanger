@@ -50,8 +50,29 @@ namespace DllRefChanger.Changer
                 }
             };
 
+            XmlNodeFeature feature3 = new XmlNodeFeature("Reference")
+            {
+                SimilarAttributeFeature = new Dictionary<string, string>()
+                {
+                    { "Include", SourceCsprojRootNamespace }
+                }
+            };
+
+            XmlNodeFeature feature4 = new XmlNodeFeature("PackageReference")
+            {
+                SimilarAttributeFeature = new Dictionary<string, string>()
+                {
+                    { "Include", SourceCsprojRootNamespace }
+                }
+            };
+
             //var selectElement = FindReferenceItem(doc);
             var selectElement = FineXElement(doc, feature1) ?? FineXElement(doc, feature2);
+
+            if (selectElement == null && !string.IsNullOrWhiteSpace(SourceCsprojRootNamespace))
+            {
+                selectElement = FineXElement(doc, feature3) ?? FineXElement(doc, feature4);
+            }
 
             if (selectElement == null)
             {
@@ -60,16 +81,17 @@ namespace DllRefChanger.Changer
 
             // 添加新节点。
             XElement newElement;
-            if (string.IsNullOrWhiteSpace(SourceCsprojGuid) || string.IsNullOrWhiteSpace(SourceCsprojName))
-            {
-                newElement = XmlElementFactory.CreateProjectReferenceNode(SourceCsprojFile, doc.Root.Name.NamespaceName);
-            }
-            else
-            {
-                newElement = XmlElementFactory.CreateProjectReferenceNode(SourceCsprojFile, SourceCsprojGuid, SourceCsprojName,
-                        doc.Root.Name.NamespaceName);
-            }
+            //if (string.IsNullOrWhiteSpace(SourceCsprojGuid) || string.IsNullOrWhiteSpace(SourceCsprojName))
+            //{
+            //    newElement = XmlElementFactory.CreateProjectReferenceNode(SourceCsprojFile, doc.Root.Name.NamespaceName);
+            //}
+            //else
+            //{
+            //    newElement = XmlElementFactory.CreateProjectReferenceNode(SourceCsprojFile, SourceCsprojGuid, SourceCsprojName,
+            //            doc.Root.Name.NamespaceName);
+            //}
 
+            newElement = XmlElementFactory.CreateProjectReferenceNode(SourceCsprojFile, doc.Root.Name.NamespaceName);
             selectElement.Parent.Add(newElement);
 
             // 删除此节点。
@@ -164,6 +186,7 @@ namespace DllRefChanger.Changer
 
         public string SourceCsprojGuid { get; private set; }
         public string SourceCsprojName { get; private set; }
+        public string SourceCsprojRootNamespace { get; private set; }
 
         private void AnalyzeSourceCsprojFile(string csprojFile)
         {
@@ -177,13 +200,19 @@ namespace DllRefChanger.Changer
 
             foreach (XElement propertyGroup in itemGroups)
             {
-                var guid = propertyGroup.Elements().FirstOrDefault(e => e.Name.LocalName == "ProjectGuid")?.Value;
-                if (string.IsNullOrEmpty(guid))
+
+                var rootNamespace = propertyGroup.Elements().FirstOrDefault(e => e.Name.LocalName == "RootNamespace")?.Value;
+
+                if (string.IsNullOrEmpty(rootNamespace))
                 {
                     continue;
                 }
+
+                var guid = propertyGroup.Elements().FirstOrDefault(e => e.Name.LocalName == "ProjectGuid")?.Value;
+
                 var assemblyName = propertyGroup.Elements().FirstOrDefault(e => e.Name.LocalName == "AssemblyName")?.Value;
 
+                SourceCsprojRootNamespace = rootNamespace;
                 SourceCsprojGuid = guid;
                 SourceCsprojName = assemblyName;
 
