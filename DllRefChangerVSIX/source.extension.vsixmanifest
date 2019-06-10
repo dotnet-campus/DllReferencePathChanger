@@ -4,17 +4,19 @@
         <Identity Id="DllRefChangerVSIX.fc2bc4da-5496-484e-89ed-bacb0108b457" Version="3.0.7" Language="zh-Hans" Publisher="Jason Liu" />
         <DisplayName>DLL Reference Path Change Auto</DisplayName>
         <Description xml:space="preserve">Repalce Assembly Reference Auto, It's useful when debugging mutil project in different solution.</Description>
-        <MoreInfo>https://github.com/JasonGrass/DllReferencePathChanger</MoreInfo>
+        <MoreInfo>https://github.com/dotnet-campus/DllReferencePathChanger</MoreInfo>
     </Metadata>
     <Installation>
-        <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[15.0]" />
+        <InstallationTarget Version="[15.0,17.0]" Id="Microsoft.VisualStudio.Community" />
+        <InstallationTarget Version="[15.0,17.0]" Id="Microsoft.VisualStudio.Enterprise" />
+        <InstallationTarget Version="[15.0,17.0]" Id="Microsoft.VisualStudio.Pro" />
     </Installation>
     <Dependencies>
         <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
-        <Dependency Id="Microsoft.VisualStudio.MPF.15.0" DisplayName="Visual Studio MPF 15.0" d:Source="Installed" Version="[12.0,16.0)" />
+        <Dependency Id="Microsoft.VisualStudio.MPF.15.0" DisplayName="Visual Studio MPF 15.0" d:Source="Installed" Version="[12.0,17.0)" />
     </Dependencies>
     <Prerequisites>
-        <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[12.0,16.0)" DisplayName="Visual Studio core editor" />
+        <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[12.0,17.0)" DisplayName="Visual Studio core editor" />
     </Prerequisites>
     <Assets>
         <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
