@@ -2,6 +2,8 @@
 using System.ComponentModel.Design;
 using System.Globalization;
 using System.Windows.Forms;
+using EnvDTE;
+using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.Win32;
@@ -71,18 +73,6 @@ namespace DllRefChangerVSIX
             }
         }
 
-        private EnvDTE.DTE _dte;
-        internal EnvDTE.DTE DTE
-        {
-            get
-            {
-                if (_dte == null)
-                    _dte = ServiceProvider.GetService(typeof(EnvDTE.DTE)) as EnvDTE.DTE;
-
-                return _dte;
-            }
-        }
-
         /// <summary>
         /// Initializes the singleton instance of the command.
         /// </summary>
@@ -101,7 +91,8 @@ namespace DllRefChangerVSIX
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
-            var solution = DTE.Solution;
+            var dte = (DTE2)Package.GetGlobalService(typeof(DTE));
+            var solution = dte.Solution;
             if (!solution.IsOpen)
             {
                 string message = "Not exsit any solution here.";
