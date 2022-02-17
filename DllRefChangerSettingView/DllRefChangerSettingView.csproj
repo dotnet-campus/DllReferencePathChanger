@@ -40,7 +40,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>DllRefChanger.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>DllRefChangerPfxFile.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>dll_128px_1071188_easyicon.net.ico</ApplicationIcon>
@@ -109,7 +109,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="DllRefChanger.pfx" />
+    <None Include="DllRefChangerPfxFile.snk" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

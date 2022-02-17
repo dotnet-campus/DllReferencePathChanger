@@ -34,7 +34,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>DllRefChanger.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>DllRefChangerPfxFile.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -62,7 +62,7 @@
     <Compile Include="SolutionConfig.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="DllRefChanger.pfx" />
+    <None Include="DllRefChangerPfxFile.snk" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
